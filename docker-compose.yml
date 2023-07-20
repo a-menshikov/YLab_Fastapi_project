@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  backend:
+    build: .
+    restart: always
+    ports:
+      - "8000:80"
+    # network_mode: host
+    # volumes:
+    #   - static_value:/app/backend-static/
+    #   - media_value:/app/backend-media/
+    #   - email_dev_data:/app/sent_emails/
+    # depends_on:
+    #   - postgres
+    # env_file:
+    #   - ./.env
