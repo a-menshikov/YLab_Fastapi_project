@@ -1,8 +1,10 @@
 import uuid
-from app.database.db_loader import Base
+
+from sqlalchemy import Column, ForeignKey, Numeric, String, Text
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy import Column, String, Text, Numeric, ForeignKey
 from sqlalchemy.orm import relationship
+
+from app.database.db_loader import Base
 
 
 class Menu(Base):
