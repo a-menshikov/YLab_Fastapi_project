@@ -1,9 +1,24 @@
 version: '3'
 
 services:
+  database:
+    image: postgres
+    restart: always
+    container_name: database
+    ports:
+      - "5432:5432"
+    # volumes:
+    #   - postgres_db_vol:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: artem
+      POSTGRES_PASSWORD: ahea31ahea31
+      POSTGRES_DB: menu_db
   backend:
     build: .
+    container_name: backend
     restart: always
+    depends_on:
+      - database
     ports:
       - "8000:80"
     # network_mode: host
