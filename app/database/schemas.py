@@ -21,3 +21,26 @@ class MenuRead(MenuBase):
 
     class Config:
         orm_mode = True
+
+
+class SubmenuBase(BaseModel):
+    """Базовая схема меню."""
+
+    title: str
+    description: str
+
+
+class SubmenuPost(SubmenuBase):
+    """Схема для создания нового меню."""
+
+    pass
+
+
+class SubmenuRead(SubmenuBase):
+    """Схема для чтения меню."""
+
+    id: str
+    menu_id: str
+
+    class Config:
+        orm_mode = True
