@@ -37,7 +37,7 @@ class Dish(Base):
 
     __tablename__ = 'dishes'
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    title = Column(String(200), nullable=False, unique=True)
+    title = Column(String(200), nullable=False)
     description = Column(Text, nullable=False)
     price = Column(Numeric(scale=2), nullable=False)
     submenu_id = Column(UUID(as_uuid=True), ForeignKey('submenus.id'))
