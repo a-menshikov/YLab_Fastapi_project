@@ -18,6 +18,8 @@ class MenuRead(MenuBase):
     """Схема для чтения меню."""
 
     id: str
+    submenus_count: int
+    dishes_count: int
 
     class Config:
         orm_mode = True
@@ -41,6 +43,7 @@ class SubmenuRead(SubmenuBase):
 
     id: str
     menu_id: str
+    dishes_count: int
 
     class Config:
         orm_mode = True
