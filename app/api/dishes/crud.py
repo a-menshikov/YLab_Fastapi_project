@@ -29,9 +29,8 @@ def update_dish(db: Session, current_dish: DishRead, updated_dish: DishPost):
     return current_dish
 
 
-def get_dish_by_id(db: Session, id: str, submenu_id: str):
+def get_dish_by_id(db: Session, id: str):
     """Получение блюда по id."""
     return db.query(Dish).filter(
         Dish.id == id,
-        Dish.submenu_id == submenu_id,
     ).first()
