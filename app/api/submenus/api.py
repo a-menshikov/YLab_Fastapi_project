@@ -32,8 +32,14 @@ def get_submenus(menu_id: str, db: Session = Depends(get_db)):
 def post_new_submenu(menu_id: str, submenu: SubmenuPost,
                      db: Session = Depends(get_db)):
     """Добавление нового подменю к конкретному меню."""
-    db_menu = get_submenu_by_title(db, title=submenu.title, menu_id=menu_id)
-    if db_menu:
+    current_menu = get_menu_by_id(db=db, id=menu_id)
+    if not current_menu:
+        raise HTTPException(
+            status_code=404,
+            detail="menu not found",
+        )
+    db_submenu = get_submenu_by_title(db, title=submenu.title, menu_id=menu_id)
+    if db_submenu:
         raise HTTPException(
             status_code=400,
             detail="Подменю с таким title уже существует",
@@ -49,6 +55,12 @@ def post_new_submenu(menu_id: str, submenu: SubmenuPost,
                     response_model=SubmenuRead)
 def get_submenu(menu_id: str, submenu_id: str, db: Session = Depends(get_db)):
     """Получение подменю конкретного меню по id."""
+    current_menu = get_menu_by_id(db=db, id=menu_id)
+    if not current_menu:
+        raise HTTPException(
+            status_code=404,
+            detail="menu not found",
+        )
     current_submenu = get_submenu_by_id(db=db, id=submenu_id, menu_id=menu_id)
     if not current_submenu:
         raise HTTPException(
@@ -66,6 +78,12 @@ def get_submenu(menu_id: str, submenu_id: str, db: Session = Depends(get_db)):
 def patch_submenu(menu_id: str, submenu_id: str, updated_submenu: SubmenuPost,
                   db: Session = Depends(get_db)):
     """Обновление подменю конкретного меню по id."""
+    current_menu = get_menu_by_id(db=db, id=menu_id)
+    if not current_menu:
+        raise HTTPException(
+            status_code=404,
+            detail="menu not found",
+        )
     current_submenu = get_submenu_by_id(db=db, id=submenu_id, menu_id=menu_id)
     if not current_submenu:
         raise HTTPException(
@@ -86,6 +104,12 @@ def patch_submenu(menu_id: str, submenu_id: str, updated_submenu: SubmenuPost,
 def delete_submenu(menu_id: str, submenu_id: str,
                    db: Session = Depends(get_db)):
     """Удаление подменю конкретного меню по id."""
+    current_menu = get_menu_by_id(db=db, id=menu_id)
+    if not current_menu:
+        raise HTTPException(
+            status_code=404,
+            detail="menu not found",
+        )
     current_submenu = get_submenu_by_id(db=db, id=submenu_id, menu_id=menu_id)
     if not current_submenu:
         raise HTTPException(
