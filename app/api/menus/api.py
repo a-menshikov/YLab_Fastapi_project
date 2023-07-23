@@ -1,3 +1,5 @@
+from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
@@ -13,7 +15,7 @@ from app.database.services import check_objects
 menu_router = APIRouter(prefix="/api/v1")
 
 
-@menu_router.get("/menus", response_model=MenuRead)
+@menu_router.get("/menus", response_model=List[MenuRead])
 def get_menus(db: Session = Depends(get_db)):
     """Получение всех меню."""
     menus = get_all_menus(db)

@@ -1,3 +1,5 @@
+from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
@@ -14,7 +16,7 @@ from app.database.schemas import SubmenuPost, SubmenuRead
 submenu_router = APIRouter(prefix="/api/v1/menus")
 
 
-@submenu_router.get("/{menu_id}/submenus", response_model=SubmenuRead)
+@submenu_router.get("/{menu_id}/submenus", response_model=List[SubmenuRead])
 def get_submenus(menu_id: str, db: Session = Depends(get_db)):
     """Получение всех подменю конкретного меню."""
     try:

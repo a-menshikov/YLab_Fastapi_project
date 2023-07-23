@@ -1,3 +1,5 @@
+from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
@@ -15,7 +17,7 @@ dish_router = APIRouter(prefix="/api/v1/menus")
 
 
 @dish_router.get("/{menu_id}/submenus/{submenu_id}/dishes",
-                 response_model=DishRead)
+                 response_model=List[DishRead])
 def get_dishes(menu_id: str, submenu_id: str,
                db: Session = Depends(get_db)):
     """Получение всех блюд конкретного подменю."""
