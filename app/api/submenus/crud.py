@@ -36,9 +36,8 @@ def get_submenu_by_title(db: Session, title: str, menu_id: str):
     ).first()
 
 
-def get_submenu_by_id(db: Session, id: str, submenu_id: str):
+def get_submenu_by_id(db: Session, id: str):
     """Получение подменю по id."""
     return db.query(Submenu).filter(
         Submenu.id == id,
-        Submenu.menu_id == submenu_id,
     ).first()

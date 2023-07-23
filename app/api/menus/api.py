@@ -2,11 +2,13 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.exc import NoResultFound
 
 from app.api.menus.crud import (create_menu, get_all_menus, get_menu_by_id,
                                 get_menu_by_title, update_menu)
 from app.database.db_loader import get_db
 from app.database.schemas import MenuPost, MenuRead
+from app.database.services import check_objects
 
 menu_router = APIRouter(prefix="/api/v1")
 
@@ -40,12 +42,14 @@ def post_new_menu(menu: MenuPost, db: Session = Depends(get_db)):
 @menu_router.get("/menus/{menu_id}", response_model=MenuRead)
 def get_menu(menu_id: str, db: Session = Depends(get_db)):
     """Получение меню по id."""
-    current_menu = get_menu_by_id(db=db, id=menu_id)
-    if not current_menu:
+    try:
+        check_objects(db=db, menu_id=menu_id)
+    except NoResultFound as error:
         raise HTTPException(
             status_code=404,
-            detail="menu not found",
+            detail=error.args[0],
         )
+    current_menu = get_menu_by_id(db=db, id=menu_id)
     return JSONResponse(
         status_code=200,
         content=jsonable_encoder(current_menu),
@@ -56,12 +60,14 @@ def get_menu(menu_id: str, db: Session = Depends(get_db)):
 def patch_menu(menu_id: str, updated_menu: MenuPost,
                db: Session = Depends(get_db)):
     """Изменение меню по id."""
-    current_menu = get_menu_by_id(db=db, id=menu_id)
-    if not current_menu:
+    try:
+        check_objects(db=db, menu_id=menu_id)
+    except NoResultFound as error:
         raise HTTPException(
             status_code=404,
-            detail="menu not found",
+            detail=error.args[0],
         )
+    current_menu = get_menu_by_id(db=db, id=menu_id)
     return JSONResponse(
         status_code=200,
         content=jsonable_encoder(update_menu(db, current_menu, updated_menu))
@@ -71,12 +77,14 @@ def patch_menu(menu_id: str, updated_menu: MenuPost,
 @menu_router.delete("/menus/{menu_id}")
 def delete_menu(menu_id: str, db: Session = Depends(get_db)):
     """Удаление меню по id."""
-    current_menu = get_menu_by_id(db=db, id=menu_id)
-    if not current_menu:
+    try:
+        check_objects(db=db, menu_id=menu_id)
+    except NoResultFound as error:
         raise HTTPException(
             status_code=404,
-            detail="menu not found",
+            detail=error.args[0],
         )
+    current_menu = get_menu_by_id(db=db, id=menu_id)
     db.delete(current_menu)
     db.commit()
     return JSONResponse(
