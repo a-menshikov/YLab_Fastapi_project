@@ -44,3 +44,27 @@ class SubmenuRead(SubmenuBase):
 
     class Config:
         orm_mode = True
+
+
+class DishBase(BaseModel):
+    """Базовая схема блюда."""
+
+    title: str
+    description: str
+    price: float
+
+
+class DishPost(DishBase):
+    """Схема для создания нового блюда."""
+
+    pass
+
+
+class DishRead(DishBase):
+    """Схема для чтения блюда."""
+
+    id: str
+    submenu_id: str
+
+    class Config:
+        orm_mode = True
