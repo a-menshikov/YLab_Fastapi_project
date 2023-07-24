@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
 
 class MenuBase(BaseModel):
@@ -54,13 +54,16 @@ class DishBase(BaseModel):
 
     title: str
     description: str
-    price: float
+    price: str
 
 
 class DishPost(DishBase):
     """Схема для создания нового блюда."""
 
-    pass
+    @validator('price')
+    def validate_price(cls, value):
+        """Округление цены до 2 знаков."""
+        return "{:.2f}".format(round(float(value), 2))
 
 
 class DishRead(DishBase):
