@@ -26,11 +26,6 @@ def update_menu(db: Session, current_menu: MenuRead, updated_menu: MenuPost):
     return current_menu
 
 
-def get_menu_by_title(db: Session, title: str):
-    """Получение меню по title."""
-    return db.query(Menu).filter(Menu.title == title).first()
-
-
 def get_menu_by_id(db: Session, id: str):
     """Получение меню по id."""
     return db.query(Menu).filter(Menu.id == id).first()

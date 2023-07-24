@@ -28,14 +28,6 @@ def update_submenu(db: Session, current_submenu: SubmenuRead,
     return current_submenu
 
 
-def get_submenu_by_title(db: Session, title: str, menu_id: str):
-    """Получение подменю по title."""
-    return db.query(Submenu).filter(
-        Submenu.title == title,
-        Submenu.menu_id == menu_id
-    ).first()
-
-
 def get_submenu_by_id(db: Session, id: str):
     """Получение подменю по id."""
     return db.query(Submenu).filter(

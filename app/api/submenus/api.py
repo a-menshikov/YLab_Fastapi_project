@@ -4,13 +4,13 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
-from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.orm.exc import NoResultFound, FlushError
 
 from app.api.menus.crud import get_menu_by_id
 from app.api.submenus.crud import (create_submenu, get_submenu_by_id,
-                                   get_submenu_by_title, update_submenu)
+                                   update_submenu)
 from app.database.db_loader import get_db
-from app.database.services import check_objects
+from app.database.services import check_objects, check_unique_submenu
 from app.database.schemas import SubmenuPost, SubmenuRead
 
 submenu_router = APIRouter(prefix="/api/v1/menus")
@@ -39,17 +39,18 @@ def post_new_submenu(menu_id: str, submenu: SubmenuPost,
                      db: Session = Depends(get_db)):
     """Добавление нового подменю к конкретному меню."""
     try:
+        check_unique_submenu(db=db, submenu=submenu)
+    except FlushError as error:
+        raise HTTPException(
+            status_code=400,
+            detail=error.args[0],
+        )
+    try:
         check_objects(db=db, menu_id=menu_id)
     except NoResultFound as error:
         raise HTTPException(
             status_code=404,
             detail=error.args[0],
-        )
-    db_submenu = get_submenu_by_title(db, title=submenu.title, menu_id=menu_id)
-    if db_submenu:
-        raise HTTPException(
-            status_code=400,
-            detail="Подменю с таким title уже существует",
         )
     new_submenu = create_submenu(db=db, submenu=submenu, menu_id=menu_id)
     return JSONResponse(

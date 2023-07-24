@@ -4,13 +4,13 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
-from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.orm.exc import NoResultFound, FlushError
 
 from app.api.menus.crud import (create_menu, get_all_menus, get_menu_by_id,
-                                get_menu_by_title, update_menu)
+                                update_menu)
 from app.database.db_loader import get_db
 from app.database.schemas import MenuPost, MenuRead
-from app.database.services import check_objects
+from app.database.services import check_objects, check_unique_menu
 
 menu_router = APIRouter(prefix="/api/v1")
 
@@ -28,11 +28,12 @@ def get_menus(db: Session = Depends(get_db)):
 @menu_router.post("/menus", response_model=MenuRead)
 def post_new_menu(menu: MenuPost, db: Session = Depends(get_db)):
     """Добавление нового меню."""
-    db_menu = get_menu_by_title(db, title=menu.title)
-    if db_menu:
+    try:
+        check_unique_menu(db=db, menu=menu)
+    except FlushError as error:
         raise HTTPException(
             status_code=400,
-            detail="Меню с таким title уже существует",
+            detail=error.args[0],
         )
     new_menu = create_menu(db=db, menu=menu)
     return JSONResponse(
