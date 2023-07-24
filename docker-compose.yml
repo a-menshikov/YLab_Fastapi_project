@@ -7,12 +7,8 @@ services:
     container_name: database
     ports:
       - "5432:5432"
-    # volumes:
-    #   - postgres_db_vol:/var/lib/postgresql/data
-    environment:
-      POSTGRES_USER: artem
-      POSTGRES_PASSWORD: ahea31ahea31
-      POSTGRES_DB: menu_db
+    env_file:
+      - .env
   backend:
     build: .
     container_name: backend
@@ -21,12 +17,5 @@ services:
       - database
     ports:
       - "8000:80"
-    # network_mode: host
-    # volumes:
-    #   - static_value:/app/backend-static/
-    #   - media_value:/app/backend-media/
-    #   - email_dev_data:/app/sent_emails/
-    # depends_on:
-    #   - postgres
-    # env_file:
-    #   - ./.env
+    env_file:
+      - .env
