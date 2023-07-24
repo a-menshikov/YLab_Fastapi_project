@@ -4,13 +4,13 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
-from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.orm.exc import NoResultFound, FlushError
 
 from app.api.dishes.crud import create_dish, get_dish_by_id, update_dish
 from app.api.submenus.crud import get_submenu_by_id
 from app.database.db_loader import get_db
 from app.database.schemas import DishRead, DishPost
-from app.database.services import check_objects
+from app.database.services import check_objects, check_unique_dish
 
 
 dish_router = APIRouter(prefix="/api/v1/menus")
@@ -54,6 +54,13 @@ def get_dishes(menu_id: str, submenu_id: str,
 def post_new_dish(menu_id: str, submenu_id: str, dish: DishPost,
                   db: Session = Depends(get_db)):
     """Добавление нового блюда."""
+    try:
+        check_unique_dish(db=db, dish=dish)
+    except FlushError as error:
+        raise HTTPException(
+            status_code=400,
+            detail=error.args[0],
+        )
     try:
         check_objects(db=db, menu_id=menu_id, submenu_id=submenu_id)
     except NoResultFound as error:

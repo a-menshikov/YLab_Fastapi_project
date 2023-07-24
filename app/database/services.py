@@ -2,9 +2,10 @@ from typing import Optional
 
 from sqlalchemy import exists
 from sqlalchemy.orm import Session
-from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.orm.exc import NoResultFound, FlushError
 
 from app.database.models import Dish, Menu, Submenu
+from app.database.schemas import DishPost, SubmenuPost, MenuPost
 
 
 def check_objects(db: Session, menu_id: Optional[str] = None,
@@ -22,3 +23,22 @@ def check_objects(db: Session, menu_id: Optional[str] = None,
     if dish_id:
         if not db.query(exists().where(Dish.id == dish_id)).scalar():
             raise NoResultFound("dish not found")
+
+
+def check_unique_dish(db: Session, dish: DishPost):
+    """Проверка на существование блюда."""
+    if db.query(exists().where(Dish.title == dish.title,
+                               Dish.description == dish.description)).scalar():
+        raise FlushError("Блюдо с таким названием и описанием уже есть")
+
+
+def check_unique_menu(db: Session, menu: MenuPost):
+    """Проверка на существование меню."""
+    if db.query(exists().where(Menu.title == menu.title)).scalar():
+        raise FlushError("Меню с таким названием уже есть")
+
+
+def check_unique_submenu(db: Session, submenu: SubmenuPost):
+    """Проверка на существование подменю."""
+    if db.query(exists().where(Submenu.title == submenu.title)).scalar():
+        raise FlushError("Подменю с таким названием уже есть")

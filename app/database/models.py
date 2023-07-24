@@ -1,11 +1,11 @@
 import uuid
 
+from app.database.db_loader import Base
 from sqlalchemy import Column, ForeignKey, Numeric, String, Text
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship, column_property
-from sqlalchemy.sql import select, func
-
-from app.database.db_loader import Base
+from sqlalchemy.orm import column_property, relationship
+from sqlalchemy.schema import UniqueConstraint
+from sqlalchemy.sql import func, select
 
 
 class Dish(Base):
@@ -19,6 +19,14 @@ class Dish(Base):
                    nullable=False)
     submenu_id = Column(UUID(as_uuid=True), ForeignKey('submenus.id'))
     submenu = relationship('Submenu', back_populates="dishes")
+
+    # выбран UniqueConstraint этих полей, потому что в подменю могут быть
+    # одинаковые блюда, но с разным описанием - порции, на вынос или в зале
+    # и так далее
+    __table_args__ = (
+        UniqueConstraint('title', 'description',
+                         name='uq_title_description'),
+    )
 
 
 class Submenu(Base):
