@@ -1,11 +1,12 @@
 import uuid
 
-from app.database.db_loader import Base
 from sqlalchemy import Column, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import column_property, relationship
 from sqlalchemy.schema import UniqueConstraint
 from sqlalchemy.sql import func, select
+
+from app.database.db_loader import Base
 
 
 class Dish(Base):

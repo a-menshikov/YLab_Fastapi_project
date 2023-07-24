@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
-from sqlalchemy.orm.exc import NoResultFound, FlushError
+from sqlalchemy.orm.exc import FlushError, NoResultFound
 
 from app.api.menus.crud import (create_menu, get_all_menus, get_menu_by_id,
                                 update_menu)

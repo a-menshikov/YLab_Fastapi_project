@@ -5,7 +5,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-
 load_dotenv()
 
 POSTGRES_USER = os.getenv('POSTGRES_USER')
@@ -21,6 +20,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 def get_db():
+    """Возвращает соединение с базой данных."""
     db = SessionLocal()
     try:
         yield db

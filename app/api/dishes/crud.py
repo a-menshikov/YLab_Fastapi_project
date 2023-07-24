@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from app.database.models import Dish
-from app.database.schemas import DishRead, DishPost
+from app.database.schemas import DishPost, DishRead
 
 
 def create_dish(db: Session, dish: DishPost, submenu_id: str):

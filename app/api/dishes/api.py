@@ -4,14 +4,13 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
-from sqlalchemy.orm.exc import NoResultFound, FlushError
+from sqlalchemy.orm.exc import FlushError, NoResultFound
 
 from app.api.dishes.crud import create_dish, get_dish_by_id, update_dish
 from app.api.submenus.crud import get_submenu_by_id
 from app.database.db_loader import get_db
-from app.database.schemas import DishRead, DishPost
+from app.database.schemas import DishPost, DishRead
 from app.database.services import check_objects, check_unique_dish
-
 
 dish_router = APIRouter(prefix="/api/v1/menus")
 

@@ -1,11 +1,10 @@
 from typing import Optional
 
+from app.database.models import Dish, Menu, Submenu
+from app.database.schemas import DishPost, MenuPost, SubmenuPost
 from sqlalchemy import exists
 from sqlalchemy.orm import Session
-from sqlalchemy.orm.exc import NoResultFound, FlushError
-
-from app.database.models import Dish, Menu, Submenu
-from app.database.schemas import DishPost, SubmenuPost, MenuPost
+from sqlalchemy.orm.exc import FlushError, NoResultFound
 
 
 def check_objects(db: Session, menu_id: Optional[str] = None,

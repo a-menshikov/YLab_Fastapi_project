@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from app.database.models import Submenu
-from app.database.schemas import SubmenuRead, SubmenuPost
+from app.database.schemas import SubmenuPost, SubmenuRead
 
 
 def create_submenu(db: Session, submenu: SubmenuPost, menu_id: str):
