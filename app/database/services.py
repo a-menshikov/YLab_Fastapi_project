@@ -34,7 +34,7 @@ def check_unique_dish(db: Session, dish: DishPost):
 def check_unique_menu(db: Session, menu: MenuPost):
     """Проверка на существование меню."""
     if db.query(exists().where(Menu.title == menu.title)).scalar():
-        raise FlushError("Меню с таким названием уже есть")
+        raise FlushError
 
 
 def check_unique_submenu(db: Session, submenu: SubmenuPost):
