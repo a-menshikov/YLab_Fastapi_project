@@ -28,7 +28,7 @@ def check_unique_dish(db: Session, dish: DishPost):
     """Проверка на существование блюда."""
     if db.query(exists().where(Dish.title == dish.title,
                                Dish.description == dish.description)).scalar():
-        raise FlushError("Блюдо с таким названием и описанием уже есть")
+        raise FlushError
 
 
 def check_unique_menu(db: Session, menu: MenuPost):
