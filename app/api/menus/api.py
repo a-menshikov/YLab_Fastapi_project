@@ -1,7 +1,6 @@
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import FlushError, NoResultFound
@@ -18,14 +17,10 @@ menu_router = APIRouter(prefix="/api/v1")
 @menu_router.get("/menus", response_model=List[MenuRead])
 def get_menus(db: Session = Depends(get_db)):
     """Получение всех меню."""
-    menus = get_all_menus(db)
-    return JSONResponse(
-        status_code=200,
-        content=jsonable_encoder(menus)
-    )
+    return get_all_menus(db)
 
 
-@menu_router.post("/menus", response_model=MenuRead)
+@menu_router.post("/menus", response_model=MenuRead, status_code=201)
 def post_new_menu(menu: MenuPost, db: Session = Depends(get_db)):
     """Добавление нового меню."""
     try:
@@ -35,11 +30,7 @@ def post_new_menu(menu: MenuPost, db: Session = Depends(get_db)):
             status_code=400,
             detail=error.args[0],
         )
-    new_menu = create_menu(db=db, menu=menu)
-    return JSONResponse(
-        status_code=201,
-        content=jsonable_encoder(new_menu),
-    )
+    return create_menu(db=db, menu=menu)
 
 
 @menu_router.get("/menus/{menu_id}", response_model=MenuRead)
@@ -52,11 +43,7 @@ def get_menu(menu_id: str, db: Session = Depends(get_db)):
             status_code=404,
             detail=error.args[0],
         )
-    current_menu = get_menu_by_id(db=db, id=menu_id)
-    return JSONResponse(
-        status_code=200,
-        content=jsonable_encoder(current_menu),
-    )
+    return get_menu_by_id(db=db, id=menu_id)
 
 
 @menu_router.patch("/menus/{menu_id}", response_model=MenuRead)
@@ -71,10 +58,7 @@ def patch_menu(menu_id: str, updated_menu: MenuPost,
             detail=error.args[0],
         )
     current_menu = get_menu_by_id(db=db, id=menu_id)
-    return JSONResponse(
-        status_code=200,
-        content=jsonable_encoder(update_menu(db, current_menu, updated_menu))
-    )
+    return update_menu(db, current_menu, updated_menu)
 
 
 @menu_router.delete("/menus/{menu_id}")

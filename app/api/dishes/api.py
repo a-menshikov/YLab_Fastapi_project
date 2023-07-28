@@ -1,7 +1,6 @@
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import FlushError, NoResultFound
@@ -42,14 +41,11 @@ def get_dishes(menu_id: str, submenu_id: str,
         dishes = current_submenu.dishes
     else:
         dishes = []
-    return JSONResponse(
-        status_code=200,
-        content=jsonable_encoder(dishes),
-    )
+    return dishes
 
 
 @dish_router.post("/{menu_id}/submenus/{submenu_id}/dishes",
-                  response_model=DishRead)
+                  response_model=DishRead, status_code=201)
 def post_new_dish(menu_id: str, submenu_id: str, dish: DishPost,
                   db: Session = Depends(get_db)):
     """Добавление нового блюда."""
@@ -67,11 +63,7 @@ def post_new_dish(menu_id: str, submenu_id: str, dish: DishPost,
             status_code=404,
             detail=error.args[0],
         )
-    new_dish = create_dish(db=db, dish=dish, submenu_id=submenu_id)
-    return JSONResponse(
-        status_code=201,
-        content=jsonable_encoder(new_dish),
-    )
+    return create_dish(db=db, dish=dish, submenu_id=submenu_id)
 
 
 @dish_router.get("/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}",
@@ -88,10 +80,7 @@ def get_dish(menu_id: str, submenu_id: str, dish_id: str,
             detail=error.args[0],
         )
     current_dish = get_dish_by_id(db=db, id=dish_id)
-    return JSONResponse(
-        status_code=200,
-        content=jsonable_encoder(current_dish),
-    )
+    return current_dish
 
 
 @dish_router.patch("/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}",
@@ -108,14 +97,7 @@ def patch_dish(menu_id: str, submenu_id: str, dish_id: str,
             detail=error.args[0],
         )
     current_dish = get_dish_by_id(db=db, id=dish_id)
-    return JSONResponse(
-        status_code=200,
-        content=jsonable_encoder(update_dish(
-            db,
-            current_dish,
-            updated_dish,
-        ))
-    )
+    return update_dish(db, current_dish, updated_dish)
 
 
 @dish_router.delete("/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}")

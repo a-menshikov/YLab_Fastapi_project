@@ -1,7 +1,6 @@
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import FlushError, NoResultFound
@@ -27,14 +26,11 @@ def get_submenus(menu_id: str, db: Session = Depends(get_db)):
             detail=error.args[0],
         )
     current_menu = get_menu_by_id(db=db, id=menu_id)
-    submenus = current_menu.submenus
-    return JSONResponse(
-        status_code=200,
-        content=jsonable_encoder(submenus),
-    )
+    return current_menu.submenus
 
 
-@submenu_router.post("/{menu_id}/submenus", response_model=SubmenuRead)
+@submenu_router.post("/{menu_id}/submenus", response_model=SubmenuRead,
+                     status_code=201)
 def post_new_submenu(menu_id: str, submenu: SubmenuPost,
                      db: Session = Depends(get_db)):
     """Добавление нового подменю к конкретному меню."""
@@ -52,11 +48,7 @@ def post_new_submenu(menu_id: str, submenu: SubmenuPost,
             status_code=404,
             detail=error.args[0],
         )
-    new_submenu = create_submenu(db=db, submenu=submenu, menu_id=menu_id)
-    return JSONResponse(
-        status_code=201,
-        content=jsonable_encoder(new_submenu),
-    )
+    return create_submenu(db=db, submenu=submenu, menu_id=menu_id)
 
 
 @submenu_router.get("/{menu_id}/submenus/{submenu_id}",
@@ -70,11 +62,7 @@ def get_submenu(menu_id: str, submenu_id: str, db: Session = Depends(get_db)):
             status_code=404,
             detail=error.args[0],
         )
-    current_submenu = get_submenu_by_id(db=db, id=submenu_id)
-    return JSONResponse(
-        status_code=200,
-        content=jsonable_encoder(current_submenu),
-    )
+    return get_submenu_by_id(db=db, id=submenu_id)
 
 
 @submenu_router.patch("/{menu_id}/submenus/{submenu_id}",
@@ -90,14 +78,7 @@ def patch_submenu(menu_id: str, submenu_id: str, updated_submenu: SubmenuPost,
             detail=error.args[0],
         )
     current_submenu = get_submenu_by_id(db=db, id=submenu_id)
-    return JSONResponse(
-        status_code=200,
-        content=jsonable_encoder(update_submenu(
-            db,
-            current_submenu,
-            updated_submenu,
-        ))
-    )
+    return update_submenu(db, current_submenu, updated_submenu)
 
 
 @submenu_router.delete("/{menu_id}/submenus/{submenu_id}")

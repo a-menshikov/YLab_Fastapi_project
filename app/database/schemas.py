@@ -1,3 +1,5 @@
+from uuid import UUID
+from decimal import Decimal
 from pydantic import BaseModel, validator
 
 
@@ -17,12 +19,16 @@ class MenuPost(MenuBase):
 class MenuRead(MenuBase):
     """Схема для чтения меню."""
 
-    id: str
+    id: UUID
     submenus_count: int
     dishes_count: int
 
     class Config:
         orm_mode = True
+
+    @validator('id')
+    def validate_id(cls, value):
+        return str(value)
 
 
 class SubmenuBase(BaseModel):
@@ -41,12 +47,20 @@ class SubmenuPost(SubmenuBase):
 class SubmenuRead(SubmenuBase):
     """Схема для чтения меню."""
 
-    id: str
-    menu_id: str
+    id: UUID
+    menu_id: UUID
     dishes_count: int
 
     class Config:
         orm_mode = True
+
+    @validator('id')
+    def validate_id(cls, value):
+        return str(value)
+
+    @validator('menu_id')
+    def validate_submenu_id(cls, value):
+        return str(value)
 
 
 class DishBase(BaseModel):
@@ -63,14 +77,27 @@ class DishPost(DishBase):
     @validator('price')
     def validate_price(cls, value):
         """Округление цены до 2 знаков."""
-        return "{:.2f}".format(round(float(value), 2))
+        return Decimal(value).quantize(Decimal('0.00'))
 
 
 class DishRead(DishBase):
     """Схема для чтения блюда."""
 
-    id: str
-    submenu_id: str
+    id: UUID
+    submenu_id: UUID
+    price: Decimal
 
     class Config:
         orm_mode = True
+
+    @validator('price')
+    def validate_price(cls, value):
+        return str(value)
+
+    @validator('id')
+    def validate_id(cls, value):
+        return str(value)
+
+    @validator('submenu_id')
+    def validate_submenu_id(cls, value):
+        return str(value)
