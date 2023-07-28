@@ -40,4 +40,4 @@ def check_unique_menu(db: Session, menu: MenuPost):
 def check_unique_submenu(db: Session, submenu: SubmenuPost):
     """Проверка на существование подменю."""
     if db.query(exists().where(Submenu.title == submenu.title)).scalar():
-        raise FlushError("Подменю с таким названием уже есть")
+        raise FlushError
