@@ -28,18 +28,16 @@ def create_submenu(db: Session, submenu: SubmenuPost, menu_id: str):
     return new_submenu
 
 
-def update_submenu(db: Session, menu_id: str, submenu_id: str,
+def update_submenu(db: Session, submenu_id: str,
                    updated_submenu: SubmenuPost):
     """Изменение подменю по id."""
-    try:
-        check_objects(db=db, menu_id=menu_id, submenu_id=submenu_id)
-    except NoResultFound as error:
-        raise NoResultFound(error.args[0])
+    current_submenu = get_submenu_by_id(db=db, id=submenu_id)
+    if not current_submenu:
+        raise NoResultFound("submenu not found")
     try:
         check_unique_submenu(db=db, submenu=updated_submenu)
     except FlushError:
         raise FlushError("Подменю с таким названием уже есть")
-    current_submenu = get_submenu_by_id(db=db, id=submenu_id)
     current_submenu.title = updated_submenu.title
     current_submenu.description = updated_submenu.description
     db.merge(current_submenu)
@@ -50,13 +48,12 @@ def update_submenu(db: Session, menu_id: str, submenu_id: str,
 
 def get_submenu_by_id(db: Session, id: str):
     """Получение подменю по id."""
-    try:
-        check_objects(db=db, submenu_id=id)
-    except NoResultFound:
-        raise NoResultFound("submenu not found")
-    return db.query(Submenu).filter(
+    current_submenu = db.query(Submenu).filter(
         Submenu.id == id,
     ).first()
+    if not current_submenu:
+        raise NoResultFound("submenu not found")
+    return current_submenu
 
 
 def get_all_submenus(db: Session, menu_id: str):
@@ -72,10 +69,8 @@ def get_all_submenus(db: Session, menu_id: str):
 
 def delete_submenu(db: Session, menu_id: str, submenu_id: str):
     """Удаление подменю конкретного меню по id."""
-    try:
-        check_objects(db=db, menu_id=menu_id, submenu_id=submenu_id)
-    except NoResultFound as error:
-        raise NoResultFound(error.args[0])
     current_submenu = get_submenu_by_id(db=db, id=submenu_id)
+    if not current_submenu:
+        raise NoResultFound("submenu not found")
     db.delete(current_submenu)
     db.commit()

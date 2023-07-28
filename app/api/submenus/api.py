@@ -58,7 +58,7 @@ def patch_submenu(menu_id: str, submenu_id: str, updated_submenu: SubmenuPost,
                   db: Session = Depends(get_db)):
     """Обновление подменю конкретного меню по id."""
     try:
-        return update_submenu(db, menu_id, submenu_id, updated_submenu)
+        return update_submenu(db, submenu_id, updated_submenu)
     except NoResultFound as error:
         raise HTTPException(
             status_code=404,
