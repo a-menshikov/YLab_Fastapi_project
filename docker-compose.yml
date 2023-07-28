@@ -1,14 +1,18 @@
-version: '3'
+version: '3.8'
 
 services:
+
   database:
-    image: postgres
+    image: postgres:15.1-alpine
     restart: always
     container_name: database
     ports:
       - "5432:5432"
+    volumes:
+      - ylab_pgdata:/var/lib/postgresql/data/
     env_file:
       - .env
+
   backend:
     build: .
     container_name: backend
@@ -19,3 +23,6 @@ services:
       - "8000:80"
     env_file:
       - .env
+
+volumes:
+  ylab_pgdata:
