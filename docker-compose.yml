@@ -5,24 +5,40 @@ services:
   database:
     image: postgres:15.1-alpine
     restart: always
+    networks:
+      - ylab_network
     container_name: database
+    expose:
+      - "5432"
     ports:
       - "5432:5432"
     volumes:
       - ylab_pgdata:/var/lib/postgresql/data/
     env_file:
       - .env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 15s
+      retries: 5
 
   backend:
     build: .
     container_name: backend
     restart: always
+    networks:
+      - ylab_network
     depends_on:
-      - database
+      database:
+        condition: service_healthy
     ports:
       - "8000:80"
     env_file:
       - .env
 
+networks:
+  ylab_network:
+    name: ylab_network
 volumes:
   ylab_pgdata:
+    name: ylab_pgdata
