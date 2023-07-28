@@ -42,6 +42,10 @@ def update_menu(db: Session, menu_id: str, updated_menu: MenuPost):
         check_objects(db=db, menu_id=menu_id)
     except NoResultFound:
         raise NoResultFound("menu not found")
+    try:
+        check_unique_menu(db=db, menu=updated_menu)
+    except FlushError:
+        raise FlushError("Меню с таким названием уже есть")
     current_menu = get_menu_by_id(db=db, id=menu_id)
     current_menu.title = updated_menu.title
     current_menu.description = updated_menu.description

@@ -54,6 +54,11 @@ def patch_menu(menu_id: str, updated_menu: MenuPost,
             status_code=404,
             detail=error.args[0],
         )
+    except FlushError as error:
+        raise HTTPException(
+            status_code=400,
+            detail=error.args[0],
+        )
 
 
 @menu_router.delete("/menus/{menu_id}")
