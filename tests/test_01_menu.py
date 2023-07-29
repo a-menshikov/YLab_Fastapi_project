@@ -27,6 +27,10 @@ def test_post_menu(menu_post, saved_data):
     assert 'submenus_count' in response.json(), \
         'Количества подменю нет в ответе'
     assert 'dishes_count' in response.json(), 'Количества блюд нет в ответе'
+    assert response.json()['title'] == menu_post['title'], \
+        'Название меню не соответствует ожидаемому'
+    assert response.json()['description'] == menu_post['description'], \
+        'Описание меню не соответствует ожидаемому'
 
     saved_data['menu'] = response.json()
 
@@ -79,6 +83,16 @@ def test_patch_menu(menu_patch, saved_data):
     )
     assert response.status_code == HTTPStatus.OK, \
         'Статус ответа не 200'
+    assert 'id' in response.json(), 'Идентификатора меню нет в ответе'
+    assert 'title' in response.json(), 'Названия меню нет в ответе'
+    assert 'description' in response.json(), 'Описания меню нет в ответе'
+    assert 'submenus_count' in response.json(), \
+        'Количества подменю нет в ответе'
+    assert 'dishes_count' in response.json(), 'Количества блюд нет в ответе'
+    assert response.json()['title'] == menu_patch['title'], \
+        'Название меню не соответствует ожидаемому'
+    assert response.json()['description'] == menu_patch['description'], \
+        'Описание меню не соответствует ожидаемому'
 
     saved_data['menu'] = response.json()
 
@@ -102,7 +116,7 @@ def test_get_patched_menu(saved_data):
         'Количество блюд не соответствует ожидаемому'
 
 
-def test_delete_menu(menu_post, saved_data):
+def test_delete_menu(saved_data):
     """Удаление текущего меню."""
     menu = saved_data['menu']
     response = client.delete(
@@ -120,7 +134,6 @@ def test_get_deleted_menu(saved_data):
     response = client.get(
         f"/api/v1/menus/{menu['id']}",
     )
-    print(response.json())
     assert response.status_code == HTTPStatus.NOT_FOUND, \
         'Статус ответа не 404'
     assert response.json()['detail'] == 'menu not found', \
