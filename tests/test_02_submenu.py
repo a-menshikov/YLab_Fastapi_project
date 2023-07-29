@@ -152,6 +152,17 @@ def test_delete_submenu(saved_data):
         'Сообщение об удалении не соответствует ожидаемому'
 
 
+def test_submenu_empty_after_delete(saved_data):
+    """Проверка получения пустого списка подменю после удаления."""
+    menu = saved_data['menu']
+    response = client.get(
+        f"/api/v1/menus/{menu['id']}/submenus/",
+    )
+    assert response.status_code == HTTPStatus.OK, \
+        'Статус ответа не 200'
+    assert response.json() == [], 'В ответе непустой список'
+
+
 def test_get_deleted_submenu(saved_data):
     """Получение удаленного подменю."""
     menu = saved_data['menu']
