@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import Column, DECIMAL, ForeignKey, String, Text
+from sqlalchemy import DECIMAL, Column, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import column_property, relationship
 from sqlalchemy.schema import UniqueConstraint

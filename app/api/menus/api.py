@@ -9,7 +9,7 @@ from app.api.menus.crud import (create_menu, delete_menu, get_all_menus,
                                 get_menu_by_id, update_menu)
 from app.database.db_loader import get_db
 from app.database.schemas import MenuPost, MenuRead
-# from app.database.services import check_objects
+
 menu_router = APIRouter(prefix="/api/v1")
 
 

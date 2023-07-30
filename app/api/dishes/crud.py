@@ -3,8 +3,8 @@ from sqlalchemy.orm.exc import FlushError, NoResultFound
 
 from app.api.submenus.crud import get_submenu_by_id
 from app.database.models import Dish
-from app.database.services import check_objects, check_unique_dish
 from app.database.schemas import DishPost
+from app.database.services import check_objects, check_unique_dish
 
 
 def create_dish(db: Session, dish: DishPost, menu_id: str, submenu_id: str):
