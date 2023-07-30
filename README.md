@@ -1,4 +1,4 @@
-# YLab_Fastapi_project ДЗ №1
+# YLab_Fastapi_project ДЗ №2
 
 Я постарался максимально облегчить процесс запуска проекта, поэтому .env файл также оставлен в репозитории для удобства. Для запуска потребуется docker compose.
 
@@ -43,9 +43,9 @@
     docker compose -f docker-compose-test.yml up -d && docker logs --follow backend && docker compose -f docker-compose-test.yml down -v
     ```
 
+Это мой первый опыт работы с фреймворком FastAPI.  
+Готов ответить на любые вопросы по проекту и буду благодарен за обратную связь.
+
 Мои контакты:  
 telegram - @Menshikov_AS  
 email - <a.menshikov1989@gmail.com>
-
-Это мой первый опыт работы с фреймворком FastAPI.  
-Готов ответить на любые вопросы по проекту и буду благодарен за обратную связь.
