@@ -5,8 +5,8 @@ import pytest
 def menu_post():
     """Фикстура меню для POST."""
     return {
-        "title": "First menu",
-        "description": "Some description"
+        'title': 'First menu',
+        'description': 'Some description'
     }
 
 
@@ -14,8 +14,8 @@ def menu_post():
 def menu_patch():
     """Фикстура меню для PATCH."""
     return {
-        "title": "First menu updated",
-        "description": "Some description updated"
+        'title': 'First menu updated',
+        'description': 'Some description updated'
     }
 
 
@@ -23,8 +23,8 @@ def menu_patch():
 def submenu_post():
     """Фикстура подменю для POST."""
     return {
-        "title": "First submenu",
-        "description": "Some description"
+        'title': 'First submenu',
+        'description': 'Some description'
     }
 
 
@@ -32,8 +32,8 @@ def submenu_post():
 def submenu_patch():
     """Фикстура подменю для PATCH."""
     return {
-        "title": "First submenu updated",
-        "description": "Some description updated"
+        'title': 'First submenu updated',
+        'description': 'Some description updated'
     }
 
 
@@ -41,9 +41,9 @@ def submenu_patch():
 def dish_post():
     """Фикстура блюда для POST."""
     return {
-        "title": "First dish",
-        "description": "Some description",
-        "price": "123.456",
+        'title': 'First dish',
+        'description': 'Some description',
+        'price': '123.456',
     }
 
 
@@ -51,9 +51,9 @@ def dish_post():
 def dish_2_post():
     """Фикстура второго блюда для POST."""
     return {
-        "title": "Second dish",
-        "description": "Some another description",
-        "price": "654.123",
+        'title': 'Second dish',
+        'description': 'Some another description',
+        'price': '654.123',
     }
 
 
@@ -61,9 +61,9 @@ def dish_2_post():
 def dish_patch():
     """Фикстура блюда для PATCH."""
     return {
-        "title": "First dish updated",
-        "description": "Some description updated",
-        "price": "654.123",
+        'title': 'First dish updated',
+        'description': 'Some description updated',
+        'price': '654.123',
     }
 
 

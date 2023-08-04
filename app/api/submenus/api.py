@@ -1,26 +1,28 @@
-from typing import List
-
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import FlushError, NoResultFound
 
-from app.api.submenus.crud import (create_submenu, delete_submenu,
-                                   get_all_submenus, get_submenu_by_id,
-                                   update_submenu)
+from app.api.submenus.crud import (
+    create_submenu,
+    delete_submenu,
+    get_all_submenus,
+    get_submenu_by_id,
+    update_submenu,
+)
 from app.database.db_loader import get_db
 from app.database.schemas import SubmenuPost, SubmenuRead
 
-submenu_router = APIRouter(prefix="/api/v1/menus")
+submenu_router = APIRouter(prefix='/api/v1/menus')
 
 
-@submenu_router.get("/{menu_id}/submenus", response_model=List[SubmenuRead])
+@submenu_router.get('/{menu_id}/submenus', response_model=list[SubmenuRead])
 def get_submenus(menu_id: str, db: Session = Depends(get_db)):
     """Получение всех подменю конкретного меню."""
     return get_all_submenus(db=db, menu_id=menu_id)
 
 
-@submenu_router.post("/{menu_id}/submenus", response_model=SubmenuRead,
+@submenu_router.post('/{menu_id}/submenus', response_model=SubmenuRead,
                      status_code=201)
 def post_new_submenu(menu_id: str, submenu: SubmenuPost,
                      db: Session = Depends(get_db)):
@@ -39,7 +41,7 @@ def post_new_submenu(menu_id: str, submenu: SubmenuPost,
         )
 
 
-@submenu_router.get("/{menu_id}/submenus/{submenu_id}",
+@submenu_router.get('/{menu_id}/submenus/{submenu_id}',
                     response_model=SubmenuRead)
 def get_submenu(menu_id: str, submenu_id: str, db: Session = Depends(get_db)):
     """Получение подменю конкретного меню по id."""
@@ -52,7 +54,7 @@ def get_submenu(menu_id: str, submenu_id: str, db: Session = Depends(get_db)):
         )
 
 
-@submenu_router.patch("/{menu_id}/submenus/{submenu_id}",
+@submenu_router.patch('/{menu_id}/submenus/{submenu_id}',
                       response_model=SubmenuRead)
 def patch_submenu(menu_id: str, submenu_id: str, updated_submenu: SubmenuPost,
                   db: Session = Depends(get_db)):
@@ -71,7 +73,7 @@ def patch_submenu(menu_id: str, submenu_id: str, updated_submenu: SubmenuPost,
         )
 
 
-@submenu_router.delete("/{menu_id}/submenus/{submenu_id}")
+@submenu_router.delete('/{menu_id}/submenus/{submenu_id}')
 def destroy_submenu(menu_id: str, submenu_id: str,
                     db: Session = Depends(get_db)):
     """Удаление подменю конкретного меню по id."""

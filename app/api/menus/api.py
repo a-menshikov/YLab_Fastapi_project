@@ -1,25 +1,28 @@
-from typing import List
-
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import FlushError, NoResultFound
 
-from app.api.menus.crud import (create_menu, delete_menu, get_all_menus,
-                                get_menu_by_id, update_menu)
+from app.api.menus.crud import (
+    create_menu,
+    delete_menu,
+    get_all_menus,
+    get_menu_by_id,
+    update_menu,
+)
 from app.database.db_loader import get_db
 from app.database.schemas import MenuPost, MenuRead
 
-menu_router = APIRouter(prefix="/api/v1")
+menu_router = APIRouter(prefix='/api/v1')
 
 
-@menu_router.get("/menus", response_model=List[MenuRead])
+@menu_router.get('/menus', response_model=list[MenuRead])
 def get_menus(db: Session = Depends(get_db)):
     """Получение всех меню."""
     return get_all_menus(db)
 
 
-@menu_router.post("/menus", response_model=MenuRead, status_code=201)
+@menu_router.post('/menus', response_model=MenuRead, status_code=201)
 def post_new_menu(menu: MenuPost, db: Session = Depends(get_db)):
     """Добавление нового меню."""
     try:
@@ -31,7 +34,7 @@ def post_new_menu(menu: MenuPost, db: Session = Depends(get_db)):
         )
 
 
-@menu_router.get("/menus/{menu_id}", response_model=MenuRead)
+@menu_router.get('/menus/{menu_id}', response_model=MenuRead)
 def get_menu(menu_id: str, db: Session = Depends(get_db)):
     """Получение меню по id."""
     try:
@@ -43,7 +46,7 @@ def get_menu(menu_id: str, db: Session = Depends(get_db)):
         )
 
 
-@menu_router.patch("/menus/{menu_id}", response_model=MenuRead)
+@menu_router.patch('/menus/{menu_id}', response_model=MenuRead)
 def patch_menu(menu_id: str, updated_menu: MenuPost,
                db: Session = Depends(get_db)):
     """Изменение меню по id."""
@@ -61,7 +64,7 @@ def patch_menu(menu_id: str, updated_menu: MenuPost,
         )
 
 
-@menu_router.delete("/menus/{menu_id}")
+@menu_router.delete('/menus/{menu_id}')
 def destroy_menu(menu_id: str, db: Session = Depends(get_db)):
     """Удаление меню по id."""
     try:

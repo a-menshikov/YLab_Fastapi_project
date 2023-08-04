@@ -12,7 +12,7 @@ def create_dish(db: Session, dish: DishPost, menu_id: str, submenu_id: str):
     try:
         check_unique_dish(db=db, dish=dish)
     except FlushError:
-        raise FlushError("Блюдо с таким названием и описанием уже есть")
+        raise FlushError('Блюдо с таким названием и описанием уже есть')
     try:
         check_objects(db=db, menu_id=menu_id, submenu_id=submenu_id)
     except NoResultFound as error:
@@ -33,11 +33,11 @@ def update_dish(db: Session, dish_id: str, updated_dish: DishPost):
     """Изменение блюда по id."""
     current_dish = get_dish_by_id(db=db, id=dish_id)
     if not current_dish:
-        raise NoResultFound("dish not found")
+        raise NoResultFound('dish not found')
     try:
         check_unique_dish(db=db, dish=updated_dish)
     except FlushError:
-        raise FlushError("Блюдо с таким названием и описанием уже есть")
+        raise FlushError('Блюдо с таким названием и описанием уже есть')
     current_dish.title = updated_dish.title
     current_dish.description = updated_dish.description
     current_dish.price = updated_dish.price
@@ -53,7 +53,7 @@ def get_dish_by_id(db: Session, id: str):
         Dish.id == id,
     ).first()
     if not dish:
-        raise NoResultFound("dish not found")
+        raise NoResultFound('dish not found')
     return dish
 
 
@@ -70,6 +70,6 @@ def delete_dish(db: Session, dish_id: str):
     """Удаление блюда по id."""
     current_dish = get_dish_by_id(db=db, id=dish_id)
     if not current_dish:
-        raise NoResultFound("dish not found")
+        raise NoResultFound('dish not found')
     db.delete(current_dish)
     db.commit()

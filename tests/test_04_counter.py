@@ -7,7 +7,7 @@ from tests.conftest import client
 def test_post_menu(menu_post, saved_data):
     """Добавление нового меню."""
     response = client.post(
-        "/api/v1/menus/",
+        '/api/v1/menus/',
         json=menu_post,
     )
     assert response.status_code == HTTPStatus.CREATED, \
@@ -207,7 +207,7 @@ def test_delete_menu(saved_data):
 def test_all_menu_empty():
     """Проверка получения пустого списка меню."""
     response = client.get(
-        "/api/v1/menus/",
+        '/api/v1/menus/',
     )
     assert response.status_code == HTTPStatus.OK, \
         'Статус ответа не 200'

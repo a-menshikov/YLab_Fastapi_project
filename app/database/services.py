@@ -1,27 +1,26 @@
-from typing import Optional
-
-from app.database.models import Dish, Menu, Submenu
-from app.database.schemas import DishPost, MenuPost, SubmenuPost
 from sqlalchemy import exists
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import FlushError, NoResultFound
 
+from app.database.models import Dish, Menu, Submenu
+from app.database.schemas import DishPost, MenuPost, SubmenuPost
 
-def check_objects(db: Session, menu_id: Optional[str] = None,
-                  submenu_id: Optional[str] = None,
-                  dish_id: Optional[str] = None):
+
+def check_objects(db: Session, menu_id: str | None = None,
+                  submenu_id: str | None = None,
+                  dish_id: str | None = None):
     """Проверка на существование объектов"""
     if menu_id:
         if not db.query(exists().where(Menu.id == menu_id)).scalar():
-            raise NoResultFound("menu not found")
+            raise NoResultFound('menu not found')
 
     if submenu_id:
         if not db.query(exists().where(Submenu.id == submenu_id)).scalar():
-            raise NoResultFound("submenu not found")
+            raise NoResultFound('submenu not found')
 
     if dish_id:
         if not db.query(exists().where(Dish.id == dish_id)).scalar():
-            raise NoResultFound("dish not found")
+            raise NoResultFound('dish not found')
 
 
 def check_unique_dish(db: Session, dish: DishPost):

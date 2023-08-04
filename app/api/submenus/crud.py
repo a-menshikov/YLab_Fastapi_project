@@ -16,7 +16,7 @@ def create_submenu(db: Session, submenu: SubmenuPost, menu_id: str):
     try:
         check_unique_submenu(db=db, submenu=submenu)
     except FlushError:
-        raise FlushError("Подменю с таким названием уже есть")
+        raise FlushError('Подменю с таким названием уже есть')
     new_submenu = Submenu(
         title=submenu.title,
         description=submenu.description,
@@ -33,11 +33,11 @@ def update_submenu(db: Session, submenu_id: str,
     """Изменение подменю по id."""
     current_submenu = get_submenu_by_id(db=db, id=submenu_id)
     if not current_submenu:
-        raise NoResultFound("submenu not found")
+        raise NoResultFound('submenu not found')
     try:
         check_unique_submenu(db=db, submenu=updated_submenu)
     except FlushError:
-        raise FlushError("Подменю с таким названием уже есть")
+        raise FlushError('Подменю с таким названием уже есть')
     current_submenu.title = updated_submenu.title
     current_submenu.description = updated_submenu.description
     db.merge(current_submenu)
@@ -52,7 +52,7 @@ def get_submenu_by_id(db: Session, id: str):
         Submenu.id == id,
     ).first()
     if not current_submenu:
-        raise NoResultFound("submenu not found")
+        raise NoResultFound('submenu not found')
     return current_submenu
 
 
@@ -71,6 +71,6 @@ def delete_submenu(db: Session, menu_id: str, submenu_id: str):
     """Удаление подменю конкретного меню по id."""
     current_submenu = get_submenu_by_id(db=db, id=submenu_id)
     if not current_submenu:
-        raise NoResultFound("submenu not found")
+        raise NoResultFound('submenu not found')
     db.delete(current_submenu)
     db.commit()
