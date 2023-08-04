@@ -1,32 +1,24 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
-from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import FlushError, NoResultFound
 
-from app.api.menus.crud import (
-    create_menu,
-    delete_menu,
-    get_all_menus,
-    get_menu_by_id,
-    update_menu,
-)
-from app.database.db_loader import get_db
+from app.api.menus.repositories import MenuService
 from app.database.schemas import MenuPost, MenuRead
 
 menu_router = APIRouter(prefix='/api/v1')
 
 
 @menu_router.get('/menus', response_model=list[MenuRead])
-def get_menus(db: Session = Depends(get_db)):
+def get_menus(repo: MenuService = Depends()):
     """Получение всех меню."""
-    return get_all_menus(db)
+    return repo.get_all_menus()
 
 
 @menu_router.post('/menus', response_model=MenuRead, status_code=201)
-def post_new_menu(menu: MenuPost, db: Session = Depends(get_db)):
+def post_new_menu(menu: MenuPost, repo: MenuService = Depends()):
     """Добавление нового меню."""
     try:
-        return create_menu(db=db, menu=menu)
+        return repo.create_menu(menu=menu)
     except FlushError as error:
         raise HTTPException(
             status_code=400,
@@ -35,10 +27,10 @@ def post_new_menu(menu: MenuPost, db: Session = Depends(get_db)):
 
 
 @menu_router.get('/menus/{menu_id}', response_model=MenuRead)
-def get_menu(menu_id: str, db: Session = Depends(get_db)):
+def get_menu(menu_id: str, repo: MenuService = Depends()):
     """Получение меню по id."""
     try:
-        return get_menu_by_id(db=db, id=menu_id)
+        return repo.get_menu_by_id(id=menu_id)
     except NoResultFound as error:
         raise HTTPException(
             status_code=404,
@@ -48,10 +40,10 @@ def get_menu(menu_id: str, db: Session = Depends(get_db)):
 
 @menu_router.patch('/menus/{menu_id}', response_model=MenuRead)
 def patch_menu(menu_id: str, updated_menu: MenuPost,
-               db: Session = Depends(get_db)):
+               repo: MenuService = Depends()):
     """Изменение меню по id."""
     try:
-        return update_menu(db, menu_id, updated_menu)
+        return repo.update_menu(menu_id, updated_menu)
     except NoResultFound as error:
         raise HTTPException(
             status_code=404,
@@ -65,10 +57,10 @@ def patch_menu(menu_id: str, updated_menu: MenuPost,
 
 
 @menu_router.delete('/menus/{menu_id}')
-def destroy_menu(menu_id: str, db: Session = Depends(get_db)):
+def destroy_menu(menu_id: str, repo: MenuService = Depends()):
     """Удаление меню по id."""
     try:
-        delete_menu(db=db, menu_id=menu_id)
+        repo.delete_menu(menu_id=menu_id)
         return JSONResponse(
             status_code=200,
             content='menu deleted',
