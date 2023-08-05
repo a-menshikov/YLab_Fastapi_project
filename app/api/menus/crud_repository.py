@@ -64,35 +64,3 @@ class MenuRepository:
             raise NoResultFound('menu not found')
         self.db.delete(current_menu)
         self.db.commit()
-
-
-class MenuService:
-    """Сервисный репозиторий для меню."""
-
-    def __init__(self, crud_repo: MenuRepository = Depends()):
-        self.crud_repo = crud_repo
-
-    def get_all_menus(self):
-        """Получение всех меню."""
-        items = self.crud_repo.get_all_menus()
-        return items
-
-    def get_menu_by_id(self, id: str):
-        """Получение меню по id."""
-        item = self.crud_repo.get_menu_by_id(id=id)
-        return item
-
-    def create_menu(self, menu: MenuPost):
-        """Добавление нового меню."""
-        item = self.crud_repo.create_menu(menu=menu)
-        return item
-
-    def update_menu(self, menu_id: str, updated_menu: MenuPost):
-        """Изменение меню по id."""
-        item = self.crud_repo.update_menu(menu_id=menu_id,
-                                          updated_menu=updated_menu)
-        return item
-
-    def delete_menu(self, menu_id: str):
-        """Удаление меню по id."""
-        self.crud_repo.delete_menu(menu_id=menu_id)

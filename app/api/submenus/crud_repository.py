@@ -2,7 +2,7 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import FlushError, NoResultFound
 
-from app.api.menus.repositories import MenuRepository
+from app.api.menus.crud_repository import MenuRepository
 from app.database.db_loader import get_db
 from app.database.models import Submenu
 from app.database.schemas import SubmenuPost
@@ -80,35 +80,3 @@ class SubmenuRepository:
             raise NoResultFound('submenu not found')
         self.db.delete(current_submenu)
         self.db.commit()
-
-
-class SubmenuService:
-    """Сервисный репозиторий для подменю."""
-
-    def __init__(self, crud_repo: SubmenuRepository = Depends()):
-        self.crud_repo = crud_repo
-
-    def get_all_submenus(self, menu_id: str):
-        """Получение всех подменю."""
-        items = self.crud_repo.get_all_submenus(menu_id=menu_id)
-        return items
-
-    def get_submenu_by_id(self, id: str):
-        """Получение подменю по id."""
-        item = self.crud_repo.get_submenu_by_id(id=id)
-        return item
-
-    def create_submenu(self, submenu: SubmenuPost, menu_id: str):
-        """Добавление нового подменю."""
-        item = self.crud_repo.create_submenu(submenu=submenu, menu_id=menu_id)
-        return item
-
-    def update_submenu(self, submenu_id: str, updated_submenu: SubmenuPost):
-        """Изменение подменю по id."""
-        item = self.crud_repo.update_submenu(submenu_id=submenu_id,
-                                             updated_submenu=updated_submenu)
-        return item
-
-    def delete_submenu(self, menu_id: str, submenu_id: str):
-        """Удаление подменю конкретного меню по id."""
-        self.crud_repo.delete_submenu(menu_id=menu_id, submenu_id=submenu_id)
