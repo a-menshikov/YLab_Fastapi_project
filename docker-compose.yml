@@ -22,6 +22,26 @@ services:
       timeout: 30s
       retries: 5
 
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    networks:
+      - ylab_network
+    volumes:
+      - ylab_redis_data:/data
+    expose:
+      - "6379"
+    ports:
+      - "6379:6379"
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+
   backend:
     build:
       context: .
@@ -32,6 +52,8 @@ services:
       - ylab_network
     depends_on:
       database:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     ports:
       - "8000:80"
@@ -44,3 +66,5 @@ networks:
 volumes:
   ylab_pgdata:
     name: ylab_pgdata
+  ylab_redis_data:
+    name: ylab_redis_data
