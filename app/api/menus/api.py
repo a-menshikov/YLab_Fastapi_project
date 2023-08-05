@@ -8,13 +8,23 @@ from app.database.schemas import MenuPost, MenuRead
 menu_router = APIRouter(prefix='/api/v1')
 
 
-@menu_router.get('/menus', response_model=list[MenuRead])
+@menu_router.get(
+    '/menus', response_model=list[MenuRead],
+    status_code=200,
+    tags=['Меню'],
+    summary='Все меню',
+)
 def get_menus(repo: MenuService = Depends()) -> list[MenuRead]:
     """Получение всех меню."""
     return repo.get_all_menus()
 
 
-@menu_router.post('/menus', response_model=MenuRead, status_code=201)
+@menu_router.post(
+    '/menus', response_model=MenuRead,
+    status_code=201,
+    tags=['Меню'],
+    summary='Добавить меню',
+)
 def post_new_menu(menu: MenuPost, repo: MenuService = Depends()) -> MenuRead:
     """Добавление нового меню."""
     try:
@@ -26,7 +36,13 @@ def post_new_menu(menu: MenuPost, repo: MenuService = Depends()) -> MenuRead:
         )
 
 
-@menu_router.get('/menus/{menu_id}', response_model=MenuRead)
+@menu_router.get(
+    '/menus/{menu_id}',
+    response_model=MenuRead,
+    status_code=200,
+    tags=['Меню'],
+    summary='Получить меню',
+)
 def get_menu(menu_id: str, repo: MenuService = Depends()) -> MenuRead:
     """Получение меню по id."""
     try:
@@ -38,7 +54,13 @@ def get_menu(menu_id: str, repo: MenuService = Depends()) -> MenuRead:
         )
 
 
-@menu_router.patch('/menus/{menu_id}', response_model=MenuRead)
+@menu_router.patch(
+    '/menus/{menu_id}',
+    response_model=MenuRead,
+    status_code=200,
+    tags=['Меню'],
+    summary='Изменить меню',
+)
 def patch_menu(menu_id: str, updated_menu: MenuPost,
                repo: MenuService = Depends()) -> MenuRead:
     """Изменение меню по id."""
@@ -56,7 +78,12 @@ def patch_menu(menu_id: str, updated_menu: MenuPost,
         )
 
 
-@menu_router.delete('/menus/{menu_id}')
+@menu_router.delete(
+    '/menus/{menu_id}',
+    status_code=200,
+    tags=['Меню'],
+    summary='Удалить меню',
+)
 def destroy_menu(menu_id: str, repo: MenuService = Depends()) -> JSONResponse:
     """Удаление меню по id."""
     try:

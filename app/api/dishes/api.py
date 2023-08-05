@@ -8,16 +8,26 @@ from app.database.schemas import DishPost, DishRead
 dish_router = APIRouter(prefix='/api/v1/menus')
 
 
-@dish_router.get('/{menu_id}/submenus/{submenu_id}/dishes',
-                 response_model=list[DishRead])
+@dish_router.get(
+    '/{menu_id}/submenus/{submenu_id}/dishes',
+    response_model=list[DishRead],
+    status_code=200,
+    tags=['Блюда'],
+    summary='Все блюда подменю',
+)
 def get_dishes(menu_id: str, submenu_id: str,
                repo: DishService = Depends()) -> list[DishRead]:
     """Получение всех блюд конкретного подменю."""
     return repo.get_all_dishes(submenu_id=submenu_id)
 
 
-@dish_router.post('/{menu_id}/submenus/{submenu_id}/dishes',
-                  response_model=DishRead, status_code=201)
+@dish_router.post(
+    '/{menu_id}/submenus/{submenu_id}/dishes',
+    response_model=DishRead,
+    status_code=201,
+    tags=['Блюда'],
+    summary='Добавить блюдо',
+)
 def post_new_dish(menu_id: str, submenu_id: str, dish: DishPost,
                   repo: DishService = Depends()) -> DishRead:
     """Добавление нового блюда."""
@@ -36,8 +46,13 @@ def post_new_dish(menu_id: str, submenu_id: str, dish: DishPost,
         )
 
 
-@dish_router.get('/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}',
-                 response_model=DishRead)
+@dish_router.get(
+    '/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}',
+    response_model=DishRead,
+    status_code=200,
+    tags=['Блюда'],
+    summary='Получить блюдо',
+)
 def get_dish(menu_id: str, submenu_id: str, dish_id: str,
              repo: DishService = Depends()) -> DishRead:
     """Получение блюда по id."""
@@ -50,8 +65,13 @@ def get_dish(menu_id: str, submenu_id: str, dish_id: str,
         )
 
 
-@dish_router.patch('/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}',
-                   response_model=DishRead)
+@dish_router.patch(
+    '/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}',
+    response_model=DishRead,
+    status_code=200,
+    tags=['Блюда'],
+    summary='Изменить блюдо',
+)
 def patch_dish(menu_id: str, submenu_id: str, dish_id: str,
                updated_dish: DishPost, repo: DishService = Depends()
                ) -> DishRead:
@@ -70,7 +90,12 @@ def patch_dish(menu_id: str, submenu_id: str, dish_id: str,
         )
 
 
-@dish_router.delete('/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}')
+@dish_router.delete(
+    '/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}',
+    status_code=200,
+    tags=['Блюда'],
+    summary='Удалить блюдо',
+)
 def destroy_dish(menu_id: str, submenu_id: str, dish_id: str,
                  repo: DishService = Depends()) -> JSONResponse:
     """Удаление блюда по id."""

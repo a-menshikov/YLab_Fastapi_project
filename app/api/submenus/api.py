@@ -8,15 +8,26 @@ from app.database.schemas import SubmenuPost, SubmenuRead
 submenu_router = APIRouter(prefix='/api/v1/menus')
 
 
-@submenu_router.get('/{menu_id}/submenus', response_model=list[SubmenuRead])
+@submenu_router.get(
+    '/{menu_id}/submenus',
+    response_model=list[SubmenuRead],
+    status_code=200,
+    tags=['Подменю'],
+    summary='Все подменю',
+)
 def get_submenus(menu_id: str,
                  repo: SubmenuService = Depends()) -> list[SubmenuRead]:
     """Получение всех подменю конкретного меню."""
     return repo.get_all_submenus(menu_id=menu_id)
 
 
-@submenu_router.post('/{menu_id}/submenus', response_model=SubmenuRead,
-                     status_code=201)
+@submenu_router.post(
+    '/{menu_id}/submenus',
+    response_model=SubmenuRead,
+    status_code=201,
+    tags=['Подменю'],
+    summary='Добавить подменю',
+)
 def post_new_submenu(menu_id: str, submenu: SubmenuPost,
                      repo: SubmenuService = Depends()) -> SubmenuRead:
     """Добавление нового подменю к конкретному меню."""
@@ -34,8 +45,13 @@ def post_new_submenu(menu_id: str, submenu: SubmenuPost,
         )
 
 
-@submenu_router.get('/{menu_id}/submenus/{submenu_id}',
-                    response_model=SubmenuRead)
+@submenu_router.get(
+    '/{menu_id}/submenus/{submenu_id}',
+    response_model=SubmenuRead,
+    status_code=200,
+    tags=['Подменю'],
+    summary='Получить подменю',
+)
 def get_submenu(menu_id: str, submenu_id: str,
                 repo: SubmenuService = Depends()) -> SubmenuRead:
     """Получение подменю конкретного меню по id."""
@@ -48,8 +64,13 @@ def get_submenu(menu_id: str, submenu_id: str,
         )
 
 
-@submenu_router.patch('/{menu_id}/submenus/{submenu_id}',
-                      response_model=SubmenuRead)
+@submenu_router.patch(
+    '/{menu_id}/submenus/{submenu_id}',
+    response_model=SubmenuRead,
+    status_code=200,
+    tags=['Подменю'],
+    summary='Изменить подменю',
+)
 def patch_submenu(menu_id: str, submenu_id: str, updated_submenu: SubmenuPost,
                   repo: SubmenuService = Depends()) -> SubmenuRead:
     """Обновление подменю конкретного меню по id."""
@@ -67,7 +88,12 @@ def patch_submenu(menu_id: str, submenu_id: str, updated_submenu: SubmenuPost,
         )
 
 
-@submenu_router.delete('/{menu_id}/submenus/{submenu_id}')
+@submenu_router.delete(
+    '/{menu_id}/submenus/{submenu_id}',
+    status_code=200,
+    tags=['Подменю'],
+    summary='Удалить подменю',
+)
 def destroy_submenu(menu_id: str, submenu_id: str,
                     repo: SubmenuService = Depends()) -> JSONResponse:
     """Удаление подменю конкретного меню по id."""
