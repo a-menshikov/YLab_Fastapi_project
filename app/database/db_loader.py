@@ -1,6 +1,7 @@
 import os
 
 from dotenv import load_dotenv
+from redis import Redis  # type: ignore
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -10,6 +11,9 @@ load_dotenv()
 POSTGRES_USER = os.getenv('POSTGRES_USER')
 POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
 POSTGRES_DB = os.getenv('POSTGRES_DB')
+REDIS_HOST = os.getenv('REDIS_HOST')
+REDIS_PORT = os.getenv('REDIS_PORT')
+EXPIRATION = os.getenv('EXPIRATION')
 
 conn_url = (f'postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSWORD}'
             f'@database/{POSTGRES_DB}')
@@ -26,3 +30,10 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+redis = Redis(
+    host=REDIS_HOST,
+    port=REDIS_PORT,
+    db=0,
+)

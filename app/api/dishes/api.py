@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm.exc import FlushError, NoResultFound
 
-from app.api.dishes.repositories import DishService
+from app.api.dishes.service_repository import DishService
 from app.database.schemas import DishPost, DishRead
 
 dish_router = APIRouter(prefix='/api/v1/menus')
