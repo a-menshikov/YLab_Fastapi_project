@@ -18,7 +18,7 @@ class SubmenuRepository:
         self.menu_repo = menu_repo
         self.model = Submenu
 
-    def create_submenu(self, submenu: SubmenuPost, menu_id: str):
+    def create_submenu(self, submenu: SubmenuPost, menu_id: str) -> Submenu:
         """Добавление нового подменю."""
         try:
             check_objects(db=self.db, menu_id=menu_id)
@@ -38,7 +38,8 @@ class SubmenuRepository:
         self.db.refresh(new_submenu)
         return new_submenu
 
-    def update_submenu(self, submenu_id: str, updated_submenu: SubmenuPost):
+    def update_submenu(self, submenu_id: str,
+                       updated_submenu: SubmenuPost) -> Submenu:
         """Изменение подменю по id."""
         current_submenu = self.get_submenu_by_id(id=submenu_id)
         if not current_submenu:
@@ -54,7 +55,7 @@ class SubmenuRepository:
         self.db.refresh(current_submenu)
         return current_submenu
 
-    def get_submenu_by_id(self, id: str):
+    def get_submenu_by_id(self, id: str) -> Submenu:
         """Получение подменю по id."""
         current_submenu = self.db.query(Submenu).filter(
             Submenu.id == id,
@@ -63,7 +64,7 @@ class SubmenuRepository:
             raise NoResultFound('submenu not found')
         return current_submenu
 
-    def get_all_submenus(self, menu_id: str):
+    def get_all_submenus(self, menu_id: str) -> list[Submenu]:
         """Получение всех подменю."""
         try:
             check_objects(db=self.db, menu_id=menu_id)
@@ -73,7 +74,7 @@ class SubmenuRepository:
             current_menu = self.menu_repo.get_menu_by_id(id=menu_id)
             return current_menu.submenus
 
-    def delete_submenu(self, menu_id: str, submenu_id: str):
+    def delete_submenu(self, menu_id: str, submenu_id: str) -> None:
         """Удаление подменю конкретного меню по id."""
         current_submenu = self.get_submenu_by_id(id=submenu_id)
         if not current_submenu:

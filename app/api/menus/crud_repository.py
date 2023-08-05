@@ -15,18 +15,18 @@ class MenuRepository:
         self.db = db
         self.model = Menu
 
-    def get_menu_by_id(self, id: str):
+    def get_menu_by_id(self, id: str) -> Menu:
         """Получение меню по id."""
         current_menu = self.db.query(Menu).filter(Menu.id == id).first()
         if not current_menu:
             raise NoResultFound('menu not found')
         return self.db.query(Menu).filter(Menu.id == id).first()
 
-    def get_all_menus(self,):
+    def get_all_menus(self) -> list[Menu]:
         """Получение всех меню."""
         return self.db.query(Menu).all()
 
-    def create_menu(self, menu: MenuPost):
+    def create_menu(self, menu: MenuPost) -> Menu:
         """Добавление нового меню."""
         try:
             check_unique_menu(db=self.db, menu=menu)
@@ -41,7 +41,7 @@ class MenuRepository:
         self.db.refresh(db_menu)
         return db_menu
 
-    def update_menu(self, menu_id: str, updated_menu: MenuPost):
+    def update_menu(self, menu_id: str, updated_menu: MenuPost) -> Menu:
         """Изменение меню по id."""
         current_menu = self.get_menu_by_id(id=menu_id)
         if not current_menu:
@@ -57,7 +57,7 @@ class MenuRepository:
         self.db.refresh(current_menu)
         return current_menu
 
-    def delete_menu(self, menu_id: str):
+    def delete_menu(self, menu_id: str) -> None:
         """Удаление меню по id."""
         current_menu = self.get_menu_by_id(id=menu_id)
         if not current_menu:

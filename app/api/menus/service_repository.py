@@ -2,6 +2,7 @@ from fastapi import Depends
 
 from app.api.menus.crud_repository import MenuRepository
 from app.database.cache_repository import СacheRepository
+from app.database.models import Menu
 from app.database.schemas import MenuPost
 
 
@@ -13,7 +14,7 @@ class MenuService:
         self.crud_repo = crud_repo
         self.cache_repo = cache_repo
 
-    def get_all_menus(self):
+    def get_all_menus(self) -> list[Menu]:
         """Получение всех меню."""
         cache = self.cache_repo.get_all_menus_cache()
         if not cache:
@@ -22,7 +23,7 @@ class MenuService:
             return items
         return cache
 
-    def get_menu_by_id(self, id: str):
+    def get_menu_by_id(self, id: str) -> Menu:
         """Получение меню по id."""
         cache = self.cache_repo.get_menu_cache(id)
         if not cache:
@@ -31,20 +32,20 @@ class MenuService:
             return item
         return cache
 
-    def create_menu(self, menu: MenuPost):
+    def create_menu(self, menu: MenuPost) -> Menu:
         """Добавление нового меню."""
         item = self.crud_repo.create_menu(menu=menu)
         self.cache_repo.create_update_menu_cache(item)
         return item
 
-    def update_menu(self, menu_id: str, updated_menu: MenuPost):
+    def update_menu(self, menu_id: str, updated_menu: MenuPost) -> Menu:
         """Изменение меню по id."""
         item = self.crud_repo.update_menu(menu_id=menu_id,
                                           updated_menu=updated_menu)
         self.cache_repo.create_update_menu_cache(item)
         return item
 
-    def delete_menu(self, menu_id: str):
+    def delete_menu(self, menu_id: str) -> None:
         """Удаление меню по id."""
         self.cache_repo.delete_menu_cache(menu_id)
         self.crud_repo.delete_menu(menu_id=menu_id)

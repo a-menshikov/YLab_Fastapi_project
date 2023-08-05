@@ -38,30 +38,24 @@ class СacheRepository():
             return item
         return None
 
-    def create_dish_cache(self, item):
-        self.delete_all_dish_cache(str(item.submenu_id))
-        redis.delete(str(item.submenu_id))
-        submenu = self.submenu_repo.get_submenu_by_id(id=item.submenu_id)
-        self.delete_all_submenu_cache(str(submenu.menu_id))
-        redis.delete(str(submenu.menu_id))
+    def delete_related_dish_cache(self, submenu_id, menu_id):
+        self.delete_all_dish_cache(submenu_id)
+        redis.delete(submenu_id)
+        self.delete_all_submenu_cache(menu_id)
+        redis.delete(menu_id)
         self.delete_all_menu_cache()
+
+    def create_dish_cache(self, item, submenu_id, menu_id):
+        self.delete_related_dish_cache(submenu_id, menu_id)
         self.set_dish_cache(item)
 
     def update_dish_cache(self, item):
         self.delete_all_dish_cache(str(item.submenu_id))
         self.set_dish_cache(item)
 
-    def delete_dish_cache(self, dish_id):
+    def delete_dish_cache(self, dish_id, submenu_id, menu_id):
         redis.delete(dish_id)
-        dish_object = self.dish_repo.get_dish_by_id(id=dish_id)
-        self.delete_all_dish_cache(str(dish_object.submenu_id))
-        redis.delete(str(dish_object.submenu_id))
-        submenu = self.submenu_repo.get_submenu_by_id(
-            id=dish_object.submenu_id
-        )
-        self.delete_all_submenu_cache(str(submenu.menu_id))
-        redis.delete(str(submenu.menu_id))
-        self.delete_all_menu_cache()
+        self.delete_related_dish_cache(submenu_id, menu_id)
 
     def delete_all_dish_cache(self, submenu_id):
         redis.delete(f'all_dishes_{submenu_id}')
@@ -97,17 +91,14 @@ class СacheRepository():
         self.delete_all_submenu_cache(str(item.menu_id))
         self.set_submenu_cache(item)
 
-    def delete_submenu_cache(self, submenu_id):
+    def delete_submenu_cache(self, submenu_id, menu_id):
         redis.delete(submenu_id)
         self.delete_all_dish_cache(submenu_id)
-        submenu_object = self.submenu_repo.get_submenu_by_id(
-            id=submenu_id
-        )
-        self.delete_all_submenu_cache(str(submenu_object.menu_id))
+        self.delete_all_submenu_cache(menu_id)
         dishes = self.dish_repo.get_all_dishes(submenu_id)
         if dishes:
             for dish in dishes:
-                self.delete_dish_cache(str(dish.id))
+                self.delete_dish_cache(str(dish.id), submenu_id, menu_id)
 
     def delete_all_submenu_cache(self, menu_id):
         redis.delete(f'all_submenus_{menu_id}')
@@ -146,4 +137,4 @@ class СacheRepository():
         submenus = self.submenu_repo.get_all_submenus(menu_id)
         if submenus:
             for submenu in submenus:
-                self.delete_submenu_cache(str(submenu.id))
+                self.delete_submenu_cache(str(submenu.id), menu_id)

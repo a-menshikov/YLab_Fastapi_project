@@ -28,7 +28,7 @@ class MenuRead(MenuBase):
         orm_mode = True
 
     @validator('id')
-    def validate_id(cls, value):
+    def validate_id(cls, value: UUID) -> str:
         """Перевод id в строку для вывода"""
         return str(value)
 
@@ -57,12 +57,12 @@ class SubmenuRead(SubmenuBase):
         orm_mode = True
 
     @validator('id')
-    def validate_id(cls, value):
+    def validate_id(cls, value: UUID) -> str:
         """Перевод id в строку для вывода"""
         return str(value)
 
     @validator('menu_id')
-    def validate_submenu_id(cls, value):
+    def validate_submenu_id(cls, value: UUID) -> str:
         """Перевод submenu_id в строку для вывода"""
         return str(value)
 
@@ -80,7 +80,7 @@ class DishPost(DishBase):
     price: str
 
     @validator('price')
-    def validate_price(cls, value):
+    def validate_price(cls, value: str) -> Decimal:
         """Округление входящей цены до 2 знаков."""
         return Decimal(value).quantize(Decimal('0.00'))
 
@@ -96,16 +96,16 @@ class DishRead(DishBase):
         orm_mode = True
 
     @validator('price')
-    def validate_price(cls, value):
+    def validate_price(cls, value: Decimal) -> str:
         """Перевод цены в строку для вывода"""
         return str(value)
 
     @validator('id')
-    def validate_id(cls, value):
+    def validate_id(cls, value: UUID) -> str:
         """Перевод id в строку для вывода"""
         return str(value)
 
     @validator('submenu_id')
-    def validate_submenu_id(cls, value):
+    def validate_submenu_id(cls, value: UUID) -> str:
         """Перевод submenu_id в строку для вывода"""
         return str(value)

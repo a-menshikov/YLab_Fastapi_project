@@ -1,10 +1,12 @@
 from decimal import Decimal
 from http import HTTPStatus
+from typing import Any
 
 from tests.conftest import client
 
 
-def test_post_menu(menu_post, saved_data):
+def test_post_menu(menu_post: dict[str, str],
+                   saved_data: dict[str, Any]) -> None:
     """Добавление нового меню."""
     response = client.post(
         '/api/v1/menus/',
@@ -22,7 +24,8 @@ def test_post_menu(menu_post, saved_data):
     saved_data['menu'] = response.json()
 
 
-def test_post_submenu(submenu_post, saved_data):
+def test_post_submenu(submenu_post: dict[str, str],
+                      saved_data: dict[str, Any]) -> None:
     """Добавление нового подменю."""
     menu = saved_data['menu']
     response = client.post(
@@ -44,7 +47,8 @@ def test_post_submenu(submenu_post, saved_data):
     saved_data['submenu'] = response.json()
 
 
-def test_post_first_dish(dish_post, saved_data):
+def test_post_first_dish(dish_post: dict[str, str],
+                         saved_data: dict[str, Any]) -> None:
     """Добавление первого нового блюда."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
@@ -71,7 +75,8 @@ def test_post_first_dish(dish_post, saved_data):
     saved_data['dish_1'] = response.json()
 
 
-def test_post_second_dish(dish_2_post, saved_data):
+def test_post_second_dish(dish_2_post: dict[str, str],
+                          saved_data: dict[str, Any]) -> None:
     """Добавление второго нового блюда."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
@@ -98,7 +103,7 @@ def test_post_second_dish(dish_2_post, saved_data):
     saved_data['dish_2'] = response.json()
 
 
-def test_current_menu(saved_data):
+def test_current_menu(saved_data: dict[str, Any]) -> None:
     """Получение текущего меню."""
     menu = saved_data['menu']
     response = client.get(
@@ -117,7 +122,7 @@ def test_current_menu(saved_data):
         'Количество блюд не соответствует ожидаемому'
 
 
-def test_get_currnet_submenu(saved_data):
+def test_get_currnet_submenu(saved_data: dict[str, Any]) -> None:
     """Получение текущего подменю."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
@@ -137,7 +142,7 @@ def test_get_currnet_submenu(saved_data):
         'Количество блюд не соответствует ожидаемому'
 
 
-def test_delete_submenu(saved_data):
+def test_delete_submenu(saved_data: dict[str, Any]) -> None:
     """Удаление текущего подменю."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
@@ -150,7 +155,7 @@ def test_delete_submenu(saved_data):
         'Сообщение об удалении не соответствует ожидаемому'
 
 
-def test_submenu_empty(saved_data):
+def test_submenu_empty(saved_data: dict[str, Any]) -> None:
     """Проверка получения пустого списка подменю."""
     menu = saved_data['menu']
     response = client.get(
@@ -161,7 +166,7 @@ def test_submenu_empty(saved_data):
     assert response.json() == [], 'В ответе непустой список'
 
 
-def test_dish_empty(saved_data):
+def test_dish_empty(saved_data: dict[str, Any]) -> None:
     """Проверка получения пустого списка блюд."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
@@ -173,7 +178,7 @@ def test_dish_empty(saved_data):
     assert response.json() == [], 'В ответе непустой список'
 
 
-def test_current_menu_empty(saved_data):
+def test_current_menu_empty(saved_data: dict[str, Any]) -> None:
     """Получение текущего меню c нулевым количеством подменю и блюд."""
     menu = saved_data['menu']
     response = client.get(
@@ -192,7 +197,7 @@ def test_current_menu_empty(saved_data):
         'Количество блюд не соответствует ожидаемому'
 
 
-def test_delete_menu(saved_data):
+def test_delete_menu(saved_data: dict[str, Any]) -> None:
     """Удаление текущего меню."""
     menu = saved_data['menu']
     response = client.delete(
@@ -204,7 +209,7 @@ def test_delete_menu(saved_data):
         'Сообщение об удалении не соответствует ожидаемому'
 
 
-def test_all_menu_empty():
+def test_all_menu_empty() -> None:
     """Проверка получения пустого списка меню."""
     response = client.get(
         '/api/v1/menus/',

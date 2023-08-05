@@ -1,8 +1,10 @@
+from typing import Any
+
 import pytest
 
 
 @pytest.fixture
-def menu_post():
+def menu_post() -> dict[str, str]:
     """Фикстура меню для POST."""
     return {
         'title': 'First menu',
@@ -11,7 +13,7 @@ def menu_post():
 
 
 @pytest.fixture
-def menu_patch():
+def menu_patch() -> dict[str, str]:
     """Фикстура меню для PATCH."""
     return {
         'title': 'First menu updated',
@@ -20,7 +22,7 @@ def menu_patch():
 
 
 @pytest.fixture
-def submenu_post():
+def submenu_post() -> dict[str, str]:
     """Фикстура подменю для POST."""
     return {
         'title': 'First submenu',
@@ -29,7 +31,7 @@ def submenu_post():
 
 
 @pytest.fixture
-def submenu_patch():
+def submenu_patch() -> dict[str, str]:
     """Фикстура подменю для PATCH."""
     return {
         'title': 'First submenu updated',
@@ -38,7 +40,7 @@ def submenu_patch():
 
 
 @pytest.fixture
-def dish_post():
+def dish_post() -> dict[str, str]:
     """Фикстура блюда для POST."""
     return {
         'title': 'First dish',
@@ -48,7 +50,7 @@ def dish_post():
 
 
 @pytest.fixture
-def dish_2_post():
+def dish_2_post() -> dict[str, str]:
     """Фикстура второго блюда для POST."""
     return {
         'title': 'Second dish',
@@ -58,7 +60,7 @@ def dish_2_post():
 
 
 @pytest.fixture
-def dish_patch():
+def dish_patch() -> dict[str, str]:
     """Фикстура блюда для PATCH."""
     return {
         'title': 'First dish updated',
@@ -68,6 +70,6 @@ def dish_patch():
 
 
 @pytest.fixture(scope='module')
-def saved_data():
+def saved_data() -> dict[str, Any]:
     """Фикстура дял сохранения объектов тестирования."""
     return {}

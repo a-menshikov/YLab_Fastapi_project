@@ -1,9 +1,10 @@
 from http import HTTPStatus
+from typing import Any
 
 from tests.conftest import client
 
 
-def test_all_menu_empty():
+def test_all_menu_empty() -> None:
     """Проверка получения пустого списка меню."""
     response = client.get(
         '/api/v1/menus/',
@@ -13,7 +14,8 @@ def test_all_menu_empty():
     assert response.json() == [], 'В ответе непустой список'
 
 
-def test_post_menu(menu_post, saved_data):
+def test_post_menu(menu_post: dict[str, str],
+                   saved_data: dict[str, Any]) -> None:
     """Добавление нового меню."""
     response = client.post(
         '/api/v1/menus/',
@@ -35,7 +37,7 @@ def test_post_menu(menu_post, saved_data):
     saved_data['menu'] = response.json()
 
 
-def test_post_menu_double(menu_post):
+def test_post_menu_double(menu_post: dict[str, str]) -> None:
     """Добавление нового меню с одинаковым названием."""
     response = client.post(
         '/api/v1/menus/',
@@ -45,7 +47,7 @@ def test_post_menu_double(menu_post):
         'Статус ответа не 400'
 
 
-def test_all_menu_not_empty():
+def test_all_menu_not_empty() -> None:
     """Проверка получения непустого списка меню."""
     response = client.get(
         '/api/v1/menus/',
@@ -55,7 +57,7 @@ def test_all_menu_not_empty():
     assert response.json() != [], 'В ответе пустой список'
 
 
-def test_get_posted_menu(saved_data):
+def test_get_posted_menu(saved_data) -> None:
     """Получение созданного меню."""
     menu = saved_data['menu']
     response = client.get(
@@ -74,7 +76,7 @@ def test_get_posted_menu(saved_data):
         'Количество блюд не соответствует ожидаемому'
 
 
-def test_patch_menu(menu_patch, saved_data):
+def test_patch_menu(menu_patch: dict[str, str], saved_data) -> None:
     """Изменение текущего меню."""
     menu = saved_data['menu']
     response = client.patch(
@@ -97,7 +99,7 @@ def test_patch_menu(menu_patch, saved_data):
     saved_data['menu'] = response.json()
 
 
-def test_get_patched_menu(saved_data):
+def test_get_patched_menu(saved_data) -> None:
     """Получение обновленного меню."""
     menu = saved_data['menu']
     response = client.get(
@@ -116,7 +118,7 @@ def test_get_patched_menu(saved_data):
         'Количество блюд не соответствует ожидаемому'
 
 
-def test_delete_menu(saved_data):
+def test_delete_menu(saved_data) -> None:
     """Удаление текущего меню."""
     menu = saved_data['menu']
     response = client.delete(
@@ -128,7 +130,7 @@ def test_delete_menu(saved_data):
         'Сообщение об удалении не соответствует ожидаемому'
 
 
-def test_get_deleted_menu(saved_data):
+def test_get_deleted_menu(saved_data) -> None:
     """Получение удаленного меню."""
     menu = saved_data['menu']
     response = client.get(

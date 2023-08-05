@@ -9,13 +9,13 @@ menu_router = APIRouter(prefix='/api/v1')
 
 
 @menu_router.get('/menus', response_model=list[MenuRead])
-def get_menus(repo: MenuService = Depends()):
+def get_menus(repo: MenuService = Depends()) -> list[MenuRead]:
     """Получение всех меню."""
     return repo.get_all_menus()
 
 
 @menu_router.post('/menus', response_model=MenuRead, status_code=201)
-def post_new_menu(menu: MenuPost, repo: MenuService = Depends()):
+def post_new_menu(menu: MenuPost, repo: MenuService = Depends()) -> MenuRead:
     """Добавление нового меню."""
     try:
         return repo.create_menu(menu=menu)
@@ -27,7 +27,7 @@ def post_new_menu(menu: MenuPost, repo: MenuService = Depends()):
 
 
 @menu_router.get('/menus/{menu_id}', response_model=MenuRead)
-def get_menu(menu_id: str, repo: MenuService = Depends()):
+def get_menu(menu_id: str, repo: MenuService = Depends()) -> MenuRead:
     """Получение меню по id."""
     try:
         return repo.get_menu_by_id(id=menu_id)
@@ -40,7 +40,7 @@ def get_menu(menu_id: str, repo: MenuService = Depends()):
 
 @menu_router.patch('/menus/{menu_id}', response_model=MenuRead)
 def patch_menu(menu_id: str, updated_menu: MenuPost,
-               repo: MenuService = Depends()):
+               repo: MenuService = Depends()) -> MenuRead:
     """Изменение меню по id."""
     try:
         return repo.update_menu(menu_id, updated_menu)
@@ -57,7 +57,7 @@ def patch_menu(menu_id: str, updated_menu: MenuPost,
 
 
 @menu_router.delete('/menus/{menu_id}')
-def destroy_menu(menu_id: str, repo: MenuService = Depends()):
+def destroy_menu(menu_id: str, repo: MenuService = Depends()) -> JSONResponse:
     """Удаление меню по id."""
     try:
         repo.delete_menu(menu_id=menu_id)

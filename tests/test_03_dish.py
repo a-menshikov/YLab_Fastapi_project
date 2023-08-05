@@ -1,10 +1,12 @@
 from decimal import Decimal
 from http import HTTPStatus
+from typing import Any
 
 from tests.conftest import client
 
 
-def test_post_menu(menu_post, saved_data):
+def test_post_menu(menu_post: dict[str, str],
+                   saved_data: dict[str, Any]) -> None:
     """Добавление нового меню."""
     response = client.post(
         '/api/v1/menus/',
@@ -22,7 +24,8 @@ def test_post_menu(menu_post, saved_data):
     saved_data['menu'] = response.json()
 
 
-def test_post_submenu(submenu_post, saved_data):
+def test_post_submenu(submenu_post: dict[str, str],
+                      saved_data: dict[str, Any]) -> None:
     """Добавление нового подменю."""
     menu = saved_data['menu']
     response = client.post(
@@ -44,7 +47,7 @@ def test_post_submenu(submenu_post, saved_data):
     saved_data['submenu'] = response.json()
 
 
-def test_dish_empty(saved_data):
+def test_dish_empty(saved_data: dict[str, Any]) -> None:
     """Проверка получения пустого списка блюд."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
@@ -56,7 +59,8 @@ def test_dish_empty(saved_data):
     assert response.json() == [], 'В ответе непустой список'
 
 
-def test_post_dish(dish_post, saved_data):
+def test_post_dish(dish_post: dict[str, str],
+                   saved_data: dict[str, Any]) -> None:
     """Добавление нового блюда."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
@@ -83,7 +87,8 @@ def test_post_dish(dish_post, saved_data):
     saved_data['dish'] = response.json()
 
 
-def test_post_dish_double(dish_post, saved_data):
+def test_post_dish_double(dish_post: dict[str, str],
+                          saved_data: dict[str, Any]) -> None:
     """Добавление нового блюда с одинаковым названием и описанием."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
@@ -95,7 +100,7 @@ def test_post_dish_double(dish_post, saved_data):
         'Статус ответа не 400'
 
 
-def test_dish_not_empty(saved_data):
+def test_dish_not_empty(saved_data: dict[str, Any]) -> None:
     """Проверка получения непустого списка блюд."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
@@ -107,7 +112,7 @@ def test_dish_not_empty(saved_data):
     assert response.json() != [], 'В ответе пустой список'
 
 
-def test_get_posted_dish(saved_data):
+def test_get_posted_dish(saved_data: dict[str, Any]) -> None:
     """Получение созданного блюда."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
@@ -129,7 +134,8 @@ def test_get_posted_dish(saved_data):
         'Ццна блюда не соответствует ожидаемой'
 
 
-def test_patch_dish(dish_patch, saved_data):
+def test_patch_dish(dish_patch: dict[str, str],
+                    saved_data: dict[str, Any]) -> None:
     """Изменение текущего блюда."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
@@ -158,7 +164,7 @@ def test_patch_dish(dish_patch, saved_data):
     saved_data['dish'] = response.json()
 
 
-def test_get_patched_dish(saved_data):
+def test_get_patched_dish(saved_data: dict[str, Any]) -> None:
     """Получение обновленного блюда."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
@@ -180,7 +186,7 @@ def test_get_patched_dish(saved_data):
         'Ццна блюда не соответствует ожидаемой'
 
 
-def test_delete_dish(saved_data):
+def test_delete_dish(saved_data: dict[str, Any]) -> None:
     """Удаление текущего подменю."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
@@ -195,7 +201,7 @@ def test_delete_dish(saved_data):
         'Сообщение об удалении не соответствует ожидаемому'
 
 
-def test_dish_empty_after_delete(saved_data):
+def test_dish_empty_after_delete(saved_data: dict[str, Any]) -> None:
     """Проверка получения пустого списка блюд после удаления."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
@@ -207,7 +213,7 @@ def test_dish_empty_after_delete(saved_data):
     assert response.json() == [], 'В ответе непустой список'
 
 
-def test_get_deleted_dish(saved_data):
+def test_get_deleted_dish(saved_data: dict[str, Any]) -> None:
     """Получение удаленного блюда."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
@@ -222,7 +228,7 @@ def test_get_deleted_dish(saved_data):
         'Сообщение об ошибке не соответствует ожидаемому'
 
 
-def test_delete_submenu(saved_data):
+def test_delete_submenu(saved_data: dict[str, Any]) -> None:
     """Удаление текущего подменю."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
@@ -235,7 +241,7 @@ def test_delete_submenu(saved_data):
         'Сообщение об удалении не соответствует ожидаемому'
 
 
-def test_deleted_submenu_dish_empty(saved_data):
+def test_deleted_submenu_dish_empty(saved_data: dict[str, Any]) -> None:
     """Проверка получения пустого списка блюд у несуществующего подменю."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
@@ -247,8 +253,9 @@ def test_deleted_submenu_dish_empty(saved_data):
     assert response.json() == [], 'В ответе непустой список'
 
 
-def test_post_submenu_and_dish_for_cascade_chek(submenu_post, dish_post,
-                                                saved_data):
+def test_post_objects_for_cascade_chek(submenu_post: dict[str, str],
+                                       dish_post: dict[str, str],
+                                       saved_data: dict[str, Any]) -> None:
     """Добавление нового подменю и блюда для проверки каскадного удаления."""
     menu = saved_data['menu']
     response = client.post(
@@ -271,7 +278,7 @@ def test_post_submenu_and_dish_for_cascade_chek(submenu_post, dish_post,
     saved_data['dish'] = response.json()
 
 
-def test_delete_submenu_for_cascade_chek(saved_data):
+def test_delete_submenu_for_cascade_chek(saved_data: dict[str, Any]) -> None:
     """Удаление текущего подменю для проверки каскадного удаления."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
@@ -284,7 +291,7 @@ def test_delete_submenu_for_cascade_chek(saved_data):
         'Сообщение об удалении не соответствует ожидаемому'
 
 
-def test_get_deleted_dish_cascade_chek(saved_data):
+def test_get_deleted_dish_cascade_chek(saved_data: dict[str, Any]) -> None:
     """Получение удаленного блюда, проверка каскадного удаления.."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
@@ -299,7 +306,7 @@ def test_get_deleted_dish_cascade_chek(saved_data):
         'Сообщение об ошибке не соответствует ожидаемому'
 
 
-def test_delete_menu_finally(saved_data):
+def test_delete_menu_finally(saved_data: dict[str, Any]) -> None:
     """Удаление текущего меню."""
     menu = saved_data['menu']
     response = client.delete(
