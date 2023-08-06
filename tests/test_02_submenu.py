@@ -1,14 +1,23 @@
 from http import HTTPStatus
 from typing import Any
 
+from app.api.menus.api import destroy_menu, post_new_menu
+from app.api.submenus.api import (
+    destroy_submenu,
+    get_submenu,
+    get_submenus,
+    patch_submenu,
+    post_new_submenu,
+)
 from tests.conftest import client
+from tests.service import reverse
 
 
 def test_post_menu(menu_post: dict[str, str],
                    saved_data: dict[str, Any]) -> None:
     """Добавление нового меню."""
     response = client.post(
-        '/api/v1/menus/',
+        reverse(post_new_menu),
         json=menu_post,
     )
     assert response.status_code == HTTPStatus.CREATED, \
@@ -27,7 +36,7 @@ def test_submenu_empty(saved_data: dict[str, Any]) -> None:
     """Проверка получения пустого списка подменю."""
     menu = saved_data['menu']
     response = client.get(
-        f"/api/v1/menus/{menu['id']}/submenus/",
+        reverse(get_submenus, menu_id=menu['id']),
     )
     assert response.status_code == HTTPStatus.OK, \
         'Статус ответа не 200'
@@ -39,7 +48,7 @@ def test_post_submenu(submenu_post: dict[str, str],
     """Добавление нового подменю."""
     menu = saved_data['menu']
     response = client.post(
-        f"/api/v1/menus/{menu['id']}/submenus/",
+        reverse(post_new_submenu, menu_id=menu['id']),
         json=submenu_post,
     )
     assert response.status_code == HTTPStatus.CREATED, \
@@ -62,7 +71,7 @@ def test_post_submenu_double(submenu_post: dict[str, str],
     """Добавление нового подменю с одинаковым названием."""
     menu = saved_data['menu']
     response = client.post(
-        f"/api/v1/menus/{menu['id']}/submenus/",
+        reverse(post_new_submenu, menu_id=menu['id']),
         json=submenu_post,
     )
     assert response.status_code == HTTPStatus.BAD_REQUEST, \
@@ -73,7 +82,7 @@ def test_all_submenu_not_empty(saved_data: dict[str, Any]) -> None:
     """Проверка получения непустого списка подменю."""
     menu = saved_data['menu']
     response = client.get(
-        f"/api/v1/menus/{menu['id']}/submenus/",
+        reverse(get_submenus, menu_id=menu['id']),
     )
     assert response.status_code == HTTPStatus.OK, \
         'Статус ответа не 200'
@@ -85,7 +94,7 @@ def test_get_posted_submenu(saved_data: dict[str, Any]) -> None:
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response = client.get(
-        f"/api/v1/menus/{menu['id']}/submenus/{submenu['id']}",
+        reverse(get_submenu, menu_id=menu['id'], submenu_id=submenu['id']),
     )
     assert response.status_code == HTTPStatus.OK, 'Статус ответа не 200'
     assert response.json()['id'] == submenu['id'], \
@@ -106,7 +115,7 @@ def test_patch_submenu(submenu_patch: dict[str, str],
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response = client.patch(
-        f"/api/v1/menus/{menu['id']}/submenus/{submenu['id']}",
+        reverse(patch_submenu, menu_id=menu['id'], submenu_id=submenu['id']),
         json=submenu_patch,
     )
     assert response.status_code == HTTPStatus.OK, \
@@ -129,7 +138,7 @@ def test_get_patched_submenu(saved_data: dict[str, Any]) -> None:
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response = client.get(
-        f"/api/v1/menus/{menu['id']}/submenus/{submenu['id']}",
+        reverse(get_submenu, menu_id=menu['id'], submenu_id=submenu['id']),
     )
     assert response.status_code == HTTPStatus.OK, 'Статус ответа не 200'
     assert response.json()['id'] == submenu['id'], \
@@ -149,7 +158,7 @@ def test_delete_submenu(saved_data: dict[str, Any]) -> None:
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response = client.delete(
-        f"/api/v1/menus/{menu['id']}/submenus/{submenu['id']}",
+        reverse(destroy_submenu, menu_id=menu['id'], submenu_id=submenu['id']),
     )
     assert response.status_code == HTTPStatus.OK, \
         'Статус ответа не 200'
@@ -161,7 +170,7 @@ def test_submenu_empty_after_delete(saved_data: dict[str, Any]) -> None:
     """Проверка получения пустого списка подменю после удаления."""
     menu = saved_data['menu']
     response = client.get(
-        f"/api/v1/menus/{menu['id']}/submenus/",
+        reverse(get_submenus, menu_id=menu['id']),
     )
     assert response.status_code == HTTPStatus.OK, \
         'Статус ответа не 200'
@@ -173,7 +182,7 @@ def test_get_deleted_submenu(saved_data: dict[str, Any]) -> None:
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response = client.get(
-        f"/api/v1/menus/{menu['id']}/submenus/{submenu['id']}",
+        reverse(get_submenu, menu_id=menu['id'], submenu_id=submenu['id']),
     )
     assert response.status_code == HTTPStatus.NOT_FOUND, \
         'Статус ответа не 404'
@@ -185,7 +194,7 @@ def test_delete_menu(saved_data: dict[str, Any]) -> None:
     """Удаление текущего меню."""
     menu = saved_data['menu']
     response = client.delete(
-        f"/api/v1/menus/{menu['id']}",
+        reverse(destroy_menu, menu_id=menu['id']),
     )
     assert response.status_code == HTTPStatus.OK, \
         'Статус ответа не 200'
@@ -197,7 +206,7 @@ def test_deleted_menu_submenu_empty(saved_data: dict[str, Any]) -> None:
     """Проверка получения пустого списка подменю у несуществующего меню."""
     menu = saved_data['menu']
     response = client.get(
-        f"/api/v1/menus/{menu['id']}/submenus/",
+        reverse(get_submenus, menu_id=menu['id']),
     )
     assert response.status_code == HTTPStatus.OK, \
         'Статус ответа не 200'
@@ -210,7 +219,7 @@ def test_post_objects_for_cascade_check(menu_post: dict[str, str],
     """Добавление нового меню и подменю для последующей проверки
     каскадного удаления."""
     response = client.post(
-        '/api/v1/menus/',
+        reverse(post_new_menu),
         json=menu_post,
     )
     assert response.status_code == HTTPStatus.CREATED, \
@@ -220,7 +229,7 @@ def test_post_objects_for_cascade_check(menu_post: dict[str, str],
 
     menu = saved_data['menu']
     response = client.post(
-        f"/api/v1/menus/{menu['id']}/submenus/",
+        reverse(post_new_submenu, menu_id=menu['id']),
         json=submenu_post,
     )
     assert response.status_code == HTTPStatus.CREATED, \
@@ -233,7 +242,7 @@ def test_delete_menu_for_cascade_check(saved_data: dict[str, Any]) -> None:
     """Удаление текущего меню."""
     menu = saved_data['menu']
     response = client.delete(
-        f"/api/v1/menus/{menu['id']}",
+        reverse(destroy_menu, menu_id=menu['id']),
     )
     assert response.status_code == HTTPStatus.OK, \
         'Статус ответа не 200'
@@ -246,7 +255,7 @@ def test_get_deleted_submenu_cascade_check(saved_data: dict[str, Any]) -> None:
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response = client.get(
-        f"/api/v1/menus/{menu['id']}/submenus/{submenu['id']}",
+        reverse(get_submenu, menu_id=menu['id'], submenu_id=submenu['id']),
     )
     assert response.status_code == HTTPStatus.NOT_FOUND, \
         'Статус ответа не 404'

@@ -2,14 +2,24 @@ from decimal import Decimal
 from http import HTTPStatus
 from typing import Any
 
+from app.api.dishes.api import (
+    destroy_dish,
+    get_dish,
+    get_dishes,
+    patch_dish,
+    post_new_dish,
+)
+from app.api.menus.api import destroy_menu, post_new_menu
+from app.api.submenus.api import destroy_submenu, post_new_submenu
 from tests.conftest import client
+from tests.service import reverse
 
 
 def test_post_menu(menu_post: dict[str, str],
                    saved_data: dict[str, Any]) -> None:
     """Добавление нового меню."""
     response = client.post(
-        '/api/v1/menus/',
+        reverse(post_new_menu),
         json=menu_post,
     )
     assert response.status_code == HTTPStatus.CREATED, \
@@ -29,7 +39,7 @@ def test_post_submenu(submenu_post: dict[str, str],
     """Добавление нового подменю."""
     menu = saved_data['menu']
     response = client.post(
-        f"/api/v1/menus/{menu['id']}/submenus/",
+        reverse(post_new_submenu, menu_id=menu['id']),
         json=submenu_post,
     )
     assert response.status_code == HTTPStatus.CREATED, \
@@ -52,7 +62,7 @@ def test_dish_empty(saved_data: dict[str, Any]) -> None:
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response = client.get(
-        f"/api/v1/menus/{menu['id']}/submenus/{submenu['id']}/dishes/",
+        reverse(get_dishes, menu_id=menu['id'], submenu_id=submenu['id']),
     )
     assert response.status_code == HTTPStatus.OK, \
         'Статус ответа не 200'
@@ -65,7 +75,7 @@ def test_post_dish(dish_post: dict[str, str],
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response = client.post(
-        f"/api/v1/menus/{menu['id']}/submenus/{submenu['id']}/dishes/",
+        reverse(post_new_dish, menu_id=menu['id'], submenu_id=submenu['id']),
         json=dish_post,
     )
     assert response.status_code == HTTPStatus.CREATED, \
@@ -93,7 +103,7 @@ def test_post_dish_double(dish_post: dict[str, str],
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response = client.post(
-        f"/api/v1/menus/{menu['id']}/submenus/{submenu['id']}/dishes/",
+        reverse(post_new_dish, menu_id=menu['id'], submenu_id=submenu['id']),
         json=dish_post,
     )
     assert response.status_code == HTTPStatus.BAD_REQUEST, \
@@ -105,7 +115,7 @@ def test_dish_not_empty(saved_data: dict[str, Any]) -> None:
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response = client.get(
-        f"/api/v1/menus/{menu['id']}/submenus/{submenu['id']}/dishes/",
+        reverse(get_dishes, menu_id=menu['id'], submenu_id=submenu['id']),
     )
     assert response.status_code == HTTPStatus.OK, \
         'Статус ответа не 200'
@@ -118,8 +128,8 @@ def test_get_posted_dish(saved_data: dict[str, Any]) -> None:
     submenu = saved_data['submenu']
     dish = saved_data['dish']
     response = client.get(
-        f"/api/v1/menus/{menu['id']}/submenus/{submenu['id']}/"
-        f"dishes/{dish['id']}",
+        reverse(get_dish, menu_id=menu['id'], submenu_id=submenu['id'],
+                dish_id=dish['id']),
     )
     assert response.status_code == HTTPStatus.OK, 'Статус ответа не 200'
     assert response.json()['id'] == dish['id'], \
@@ -141,8 +151,8 @@ def test_patch_dish(dish_patch: dict[str, str],
     submenu = saved_data['submenu']
     dish = saved_data['dish']
     response = client.patch(
-        f"/api/v1/menus/{menu['id']}/submenus/{submenu['id']}/"
-        f"dishes/{dish['id']}",
+        reverse(patch_dish, menu_id=menu['id'], submenu_id=submenu['id'],
+                dish_id=dish['id']),
         json=dish_patch,
     )
     assert response.status_code == HTTPStatus.OK, \
@@ -170,8 +180,8 @@ def test_get_patched_dish(saved_data: dict[str, Any]) -> None:
     submenu = saved_data['submenu']
     dish = saved_data['dish']
     response = client.get(
-        f"/api/v1/menus/{menu['id']}/submenus/{submenu['id']}/"
-        f"dishes/{dish['id']}",
+        reverse(get_dish, menu_id=menu['id'], submenu_id=submenu['id'],
+                dish_id=dish['id']),
     )
     assert response.status_code == HTTPStatus.OK, 'Статус ответа не 200'
     assert response.json()['id'] == dish['id'], \
@@ -192,8 +202,8 @@ def test_delete_dish(saved_data: dict[str, Any]) -> None:
     submenu = saved_data['submenu']
     dish = saved_data['dish']
     response = client.delete(
-        f"/api/v1/menus/{menu['id']}/submenus/{submenu['id']}/"
-        f"dishes/{dish['id']}",
+        reverse(destroy_dish, menu_id=menu['id'], submenu_id=submenu['id'],
+                dish_id=dish['id']),
     )
     assert response.status_code == HTTPStatus.OK, \
         'Статус ответа не 200'
@@ -206,7 +216,7 @@ def test_dish_empty_after_delete(saved_data: dict[str, Any]) -> None:
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response = client.get(
-        f"/api/v1/menus/{menu['id']}/submenus/{submenu['id']}/dishes/",
+        reverse(get_dishes, menu_id=menu['id'], submenu_id=submenu['id']),
     )
     assert response.status_code == HTTPStatus.OK, \
         'Статус ответа не 200'
@@ -219,8 +229,8 @@ def test_get_deleted_dish(saved_data: dict[str, Any]) -> None:
     submenu = saved_data['submenu']
     dish = saved_data['dish']
     response = client.get(
-        f"/api/v1/menus/{menu['id']}/submenus/{submenu['id']}/"
-        f"dishes/{dish['id']}",
+        reverse(get_dish, menu_id=menu['id'], submenu_id=submenu['id'],
+                dish_id=dish['id']),
     )
     assert response.status_code == HTTPStatus.NOT_FOUND, \
         'Статус ответа не 404'
@@ -233,7 +243,7 @@ def test_delete_submenu(saved_data: dict[str, Any]) -> None:
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response = client.delete(
-        f"/api/v1/menus/{menu['id']}/submenus/{submenu['id']}",
+        reverse(destroy_submenu, menu_id=menu['id'], submenu_id=submenu['id']),
     )
     assert response.status_code == HTTPStatus.OK, \
         'Статус ответа не 200'
@@ -246,7 +256,7 @@ def test_deleted_submenu_dish_empty(saved_data: dict[str, Any]) -> None:
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response = client.get(
-        f"/api/v1/menus/{menu['id']}/submenus/{submenu['id']}/dishes/",
+        reverse(get_dishes, menu_id=menu['id'], submenu_id=submenu['id']),
     )
     assert response.status_code == HTTPStatus.OK, \
         'Статус ответа не 200'
@@ -259,7 +269,7 @@ def test_post_objects_for_cascade_chek(submenu_post: dict[str, str],
     """Добавление нового подменю и блюда для проверки каскадного удаления."""
     menu = saved_data['menu']
     response = client.post(
-        f"/api/v1/menus/{menu['id']}/submenus/",
+        reverse(post_new_submenu, menu_id=menu['id']),
         json=submenu_post,
     )
     assert response.status_code == HTTPStatus.CREATED, \
@@ -269,7 +279,7 @@ def test_post_objects_for_cascade_chek(submenu_post: dict[str, str],
 
     submenu = saved_data['submenu']
     response = client.post(
-        f"/api/v1/menus/{menu['id']}/submenus/{submenu['id']}/dishes/",
+        reverse(post_new_dish, menu_id=menu['id'], submenu_id=submenu['id']),
         json=dish_post,
     )
     assert response.status_code == HTTPStatus.CREATED, \
@@ -283,7 +293,7 @@ def test_delete_submenu_for_cascade_chek(saved_data: dict[str, Any]) -> None:
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response = client.delete(
-        f"/api/v1/menus/{menu['id']}/submenus/{submenu['id']}",
+        reverse(destroy_submenu, menu_id=menu['id'], submenu_id=submenu['id']),
     )
     assert response.status_code == HTTPStatus.OK, \
         'Статус ответа не 200'
@@ -297,8 +307,8 @@ def test_get_deleted_dish_cascade_chek(saved_data: dict[str, Any]) -> None:
     submenu = saved_data['submenu']
     dish = saved_data['dish']
     response = client.get(
-        f"/api/v1/menus/{menu['id']}/submenus/{submenu['id']}/"
-        f"dishes/{dish['id']}",
+        reverse(get_dish, menu_id=menu['id'], submenu_id=submenu['id'],
+                dish_id=dish['id']),
     )
     assert response.status_code == HTTPStatus.NOT_FOUND, \
         'Статус ответа не 404'
@@ -310,7 +320,7 @@ def test_delete_menu_finally(saved_data: dict[str, Any]) -> None:
     """Удаление текущего меню."""
     menu = saved_data['menu']
     response = client.delete(
-        f"/api/v1/menus/{menu['id']}",
+        reverse(destroy_menu, menu_id=menu['id']),
     )
     assert response.status_code == HTTPStatus.OK, \
         'Статус ответа не 200'

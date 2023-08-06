@@ -1,13 +1,21 @@
 from http import HTTPStatus
 from typing import Any
 
+from app.api.menus.api import (
+    destroy_menu,
+    get_menu,
+    get_menus,
+    patch_menu,
+    post_new_menu,
+)
 from tests.conftest import client
+from tests.service import reverse
 
 
 def test_all_menu_empty() -> None:
     """Проверка получения пустого списка меню."""
     response = client.get(
-        '/api/v1/menus/',
+        reverse(get_menus),
     )
     assert response.status_code == HTTPStatus.OK, \
         'Статус ответа не 200'
@@ -18,7 +26,7 @@ def test_post_menu(menu_post: dict[str, str],
                    saved_data: dict[str, Any]) -> None:
     """Добавление нового меню."""
     response = client.post(
-        '/api/v1/menus/',
+        reverse(post_new_menu),
         json=menu_post,
     )
     assert response.status_code == HTTPStatus.CREATED, \
@@ -40,7 +48,7 @@ def test_post_menu(menu_post: dict[str, str],
 def test_post_menu_double(menu_post: dict[str, str]) -> None:
     """Добавление нового меню с одинаковым названием."""
     response = client.post(
-        '/api/v1/menus/',
+        reverse(post_new_menu),
         json=menu_post,
     )
     assert response.status_code == HTTPStatus.BAD_REQUEST, \
@@ -50,7 +58,7 @@ def test_post_menu_double(menu_post: dict[str, str]) -> None:
 def test_all_menu_not_empty() -> None:
     """Проверка получения непустого списка меню."""
     response = client.get(
-        '/api/v1/menus/',
+        reverse(get_menus),
     )
     assert response.status_code == HTTPStatus.OK, \
         'Статус ответа не 200'
@@ -61,7 +69,7 @@ def test_get_posted_menu(saved_data) -> None:
     """Получение созданного меню."""
     menu = saved_data['menu']
     response = client.get(
-        f"/api/v1/menus/{menu['id']}",
+        reverse(get_menu, menu_id=menu['id']),
     )
     assert response.status_code == HTTPStatus.OK, 'Статус ответа не 200'
     assert response.json()['id'] == menu['id'], \
@@ -80,7 +88,7 @@ def test_patch_menu(menu_patch: dict[str, str], saved_data) -> None:
     """Изменение текущего меню."""
     menu = saved_data['menu']
     response = client.patch(
-        f"/api/v1/menus/{menu['id']}",
+        reverse(patch_menu, menu_id=menu['id']),
         json=menu_patch,
     )
     assert response.status_code == HTTPStatus.OK, \
@@ -103,7 +111,7 @@ def test_get_patched_menu(saved_data) -> None:
     """Получение обновленного меню."""
     menu = saved_data['menu']
     response = client.get(
-        f"/api/v1/menus/{menu['id']}",
+        reverse(get_menu, menu_id=menu['id']),
     )
     assert response.status_code == HTTPStatus.OK, 'Статус ответа не 200'
     assert response.json()['id'] == menu['id'], \
@@ -122,7 +130,7 @@ def test_delete_menu(saved_data) -> None:
     """Удаление текущего меню."""
     menu = saved_data['menu']
     response = client.delete(
-        f"/api/v1/menus/{menu['id']}",
+        reverse(destroy_menu, menu_id=menu['id']),
     )
     assert response.status_code == HTTPStatus.OK, \
         'Статус ответа не 200'
@@ -134,7 +142,7 @@ def test_get_deleted_menu(saved_data) -> None:
     """Получение удаленного меню."""
     menu = saved_data['menu']
     response = client.get(
-        f"/api/v1/menus/{menu['id']}",
+        reverse(get_menu, menu_id=menu['id']),
     )
     assert response.status_code == HTTPStatus.NOT_FOUND, \
         'Статус ответа не 404'
