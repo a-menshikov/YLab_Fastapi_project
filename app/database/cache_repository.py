@@ -120,9 +120,11 @@ class СacheRepository():
         self.delete_all_dish_cache(submenu_id)
         self.delete_all_submenu_cache(menu_id)
         dishes = self.dish_repo.get_all_dishes(submenu_id)
-        if dishes:
-            for dish in dishes:
-                self.delete_dish_cache(str(dish.id), submenu_id, menu_id)
+        dish_ids = [str(dish.id) for dish in dishes]
+        if dish_ids:
+            self.cacher.unlink(*dish_ids)
+        self.cacher.delete(menu_id)
+        self.delete_all_menu_cache()
 
     def delete_all_submenu_cache(self, menu_id: str) -> None:
         """Удаление всех подменю меню из кеша."""
@@ -167,6 +169,6 @@ class СacheRepository():
         self.delete_all_menu_cache()
         self.delete_all_submenu_cache(menu_id)
         submenus = self.submenu_repo.get_all_submenus(menu_id)
-        if submenus:
-            for submenu in submenus:
-                self.delete_submenu_cache(str(submenu.id), menu_id)
+        submenu_ids = [str(submenu.id) for submenu in submenus]
+        if submenu_ids:
+            self.cacher.unlink(*submenu_ids)
