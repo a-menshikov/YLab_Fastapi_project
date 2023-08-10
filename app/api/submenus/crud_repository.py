@@ -52,7 +52,7 @@ class SubmenuRepository:
             raise FlushError('Подменю с таким названием уже есть')
         current_submenu.title = updated_submenu.title
         current_submenu.description = updated_submenu.description
-        self.db.merge(current_submenu)
+        await self.db.merge(current_submenu)
         await self.db.commit()
         await self.db.refresh(current_submenu)
         return current_submenu

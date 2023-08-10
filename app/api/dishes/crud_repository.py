@@ -54,7 +54,7 @@ class DishRepository:
         current_dish.title = updated_dish.title
         current_dish.description = updated_dish.description
         current_dish.price = updated_dish.price
-        self.db.merge(current_dish)
+        await self.db.merge(current_dish)
         await self.db.commit()
         await self.db.refresh(current_dish)
         return current_dish

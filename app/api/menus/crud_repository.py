@@ -57,7 +57,7 @@ class MenuRepository:
             raise FlushError('Меню с таким названием уже есть')
         current_menu.title = updated_menu.title
         current_menu.description = updated_menu.description
-        self.db.merge(current_menu)
+        await self.db.merge(current_menu)
         await self.db.commit()
         await self.db.refresh(current_menu)
         return current_menu
