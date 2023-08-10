@@ -1,6 +1,26 @@
+import asyncio
 from typing import Any
 
 import pytest
+from httpx import AsyncClient
+
+from app.main import app
+
+
+@pytest.fixture(scope='session')
+def event_loop(request):
+    """Создает экземпляр стандартного цикла событий
+    для каждого тестового случая."""
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+    yield loop
+    loop.close()
+
+
+@pytest.fixture(scope='session')
+async def client():
+    """Асинхронный клиент."""
+    async with AsyncClient(app=app, base_url='http://test') as client:
+        yield client
 
 
 @pytest.fixture
