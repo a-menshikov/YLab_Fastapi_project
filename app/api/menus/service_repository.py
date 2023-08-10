@@ -14,38 +14,38 @@ class MenuService:
         self.crud_repo = crud_repo
         self.cache_repo = cache_repo
 
-    def get_all_menus(self) -> list[Menu]:
+    async def get_all_menus(self) -> list[Menu]:
         """Получение всех меню."""
-        cache = self.cache_repo.get_all_menus_cache()
+        cache = await self.cache_repo.get_all_menus_cache()
         if not cache:
-            items = self.crud_repo.get_all_menus()
-            self.cache_repo.set_all_menus_cache(items)
+            items = await self.crud_repo.get_all_menus()
+            await self.cache_repo.set_all_menus_cache(items)
             return items
         return cache
 
-    def get_menu_by_id(self, id: str) -> Menu:
+    async def get_menu_by_id(self, id: str) -> Menu:
         """Получение меню по id."""
-        cache = self.cache_repo.get_menu_cache(id)
+        cache = await self.cache_repo.get_menu_cache(id)
         if not cache:
-            item = self.crud_repo.get_menu_by_id(id=id)
-            self.cache_repo.set_menu_cache(item)
+            item = await self.crud_repo.get_menu_by_id(id=id)
+            await self.cache_repo.set_menu_cache(item)
             return item
         return cache
 
-    def create_menu(self, menu: MenuPost) -> Menu:
+    async def create_menu(self, menu: MenuPost) -> Menu:
         """Добавление нового меню."""
-        item = self.crud_repo.create_menu(menu=menu)
-        self.cache_repo.create_update_menu_cache(item)
+        item = await self.crud_repo.create_menu(menu=menu)
+        await self.cache_repo.create_update_menu_cache(item)
         return item
 
-    def update_menu(self, menu_id: str, updated_menu: MenuPost) -> Menu:
+    async def update_menu(self, menu_id: str, updated_menu: MenuPost) -> Menu:
         """Изменение меню по id."""
-        item = self.crud_repo.update_menu(menu_id=menu_id,
-                                          updated_menu=updated_menu)
-        self.cache_repo.create_update_menu_cache(item)
+        item = await self.crud_repo.update_menu(menu_id=menu_id,
+                                                updated_menu=updated_menu)
+        await self.cache_repo.create_update_menu_cache(item)
         return item
 
-    def delete_menu(self, menu_id: str) -> None:
+    async def delete_menu(self, menu_id: str) -> None:
         """Удаление меню по id."""
-        self.cache_repo.delete_menu_cache(menu_id)
-        self.crud_repo.delete_menu(menu_id=menu_id)
+        await self.cache_repo.delete_menu_cache(menu_id)
+        await self.crud_repo.delete_menu(menu_id=menu_id)
