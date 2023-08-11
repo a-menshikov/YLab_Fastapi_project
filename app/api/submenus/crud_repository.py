@@ -1,5 +1,6 @@
 from fastapi import Depends
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.exc import FlushError, NoResultFound
 
 from app.api.menus.crud_repository import MenuRepository
@@ -12,20 +13,21 @@ from app.database.services import check_objects, check_unique_submenu
 class SubmenuRepository:
     """Репозиторий CRUD операций модели подменю."""
 
-    def __init__(self, db: Session = Depends(get_db),
+    def __init__(self, db: AsyncSession = Depends(get_db),
                  menu_repo: MenuRepository = Depends()) -> None:
         self.db = db
         self.menu_repo = menu_repo
         self.model = Submenu
 
-    def create_submenu(self, submenu: SubmenuPost, menu_id: str) -> Submenu:
+    async def create_submenu(self, submenu: SubmenuPost,
+                             menu_id: str) -> Submenu:
         """Добавление нового подменю."""
         try:
-            check_objects(db=self.db, menu_id=menu_id)
+            await check_objects(db=self.db, menu_id=menu_id)
         except NoResultFound as error:
             raise NoResultFound(error.args[0])
         try:
-            check_unique_submenu(db=self.db, submenu=submenu)
+            await check_unique_submenu(db=self.db, submenu=submenu)
         except FlushError:
             raise FlushError('Подменю с таким названием уже есть')
         new_submenu = Submenu(
@@ -34,50 +36,51 @@ class SubmenuRepository:
             menu_id=menu_id,
         )
         self.db.add(new_submenu)
-        self.db.commit()
-        self.db.refresh(new_submenu)
+        await self.db.commit()
+        await self.db.refresh(new_submenu)
         return new_submenu
 
-    def update_submenu(self, submenu_id: str,
-                       updated_submenu: SubmenuPost) -> Submenu:
+    async def update_submenu(self, submenu_id: str,
+                             updated_submenu: SubmenuPost) -> Submenu:
         """Изменение подменю по id."""
-        current_submenu = self.get_submenu_by_id(id=submenu_id)
+        current_submenu = await self.get_submenu_by_id(id=submenu_id)
         if not current_submenu:
             raise NoResultFound('submenu not found')
         try:
-            check_unique_submenu(db=self.db, submenu=updated_submenu)
+            await check_unique_submenu(db=self.db, submenu=updated_submenu)
         except FlushError:
             raise FlushError('Подменю с таким названием уже есть')
         current_submenu.title = updated_submenu.title
         current_submenu.description = updated_submenu.description
-        self.db.merge(current_submenu)
-        self.db.commit()
-        self.db.refresh(current_submenu)
+        await self.db.merge(current_submenu)
+        await self.db.commit()
+        await self.db.refresh(current_submenu)
         return current_submenu
 
-    def get_submenu_by_id(self, id: str) -> Submenu:
+    async def get_submenu_by_id(self, id: str) -> Submenu:
         """Получение подменю по id."""
-        current_submenu = self.db.query(Submenu).filter(
-            Submenu.id == id,
-        ).first()
+        current_submenu = (await self.db.execute(
+            select(self.model).where(self.model.id == id)
+        )).scalar()
         if not current_submenu:
             raise NoResultFound('submenu not found')
         return current_submenu
 
-    def get_all_submenus(self, menu_id: str) -> list[Submenu]:
+    async def get_all_submenus(self, menu_id: str) -> list[Submenu]:
         """Получение всех подменю."""
         try:
-            check_objects(db=self.db, menu_id=menu_id)
+            await check_objects(db=self.db, menu_id=menu_id)
         except NoResultFound:
             return []
         else:
-            current_menu = self.menu_repo.get_menu_by_id(id=menu_id)
-            return current_menu.submenus
+            return ((await self.db.execute(
+                select(self.model).where(self.model.menu_id == menu_id),
+            )).scalars().all())
 
-    def delete_submenu(self, menu_id: str, submenu_id: str) -> None:
+    async def delete_submenu(self, menu_id: str, submenu_id: str) -> None:
         """Удаление подменю конкретного меню по id."""
-        current_submenu = self.get_submenu_by_id(id=submenu_id)
+        current_submenu = await self.get_submenu_by_id(id=submenu_id)
         if not current_submenu:
             raise NoResultFound('submenu not found')
-        self.db.delete(current_submenu)
-        self.db.commit()
+        await self.db.delete(current_submenu)
+        await self.db.commit()

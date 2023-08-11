@@ -14,40 +14,41 @@ class DishService:
         self.crud_repo = crud_repo
         self.cache_repo = cache_repo
 
-    def get_all_dishes(self, submenu_id: str) -> list[Dish]:
+    async def get_all_dishes(self, submenu_id: str) -> list[Dish]:
         """Получение всех блюд."""
-        cache = self.cache_repo.get_all_dishes_cache(submenu_id)
+        cache = await self.cache_repo.get_all_dishes_cache(submenu_id)
         if not cache:
-            items = self.crud_repo.get_all_dishes(submenu_id=submenu_id)
-            self.cache_repo.set_all_dishes_cache(submenu_id, items)
+            items = await self.crud_repo.get_all_dishes(submenu_id=submenu_id)
+            await self.cache_repo.set_all_dishes_cache(submenu_id, items)
             return items
         return cache
 
-    def get_dish_by_id(self, id: str) -> Dish:
+    async def get_dish_by_id(self, id: str) -> Dish:
         """Получение блюда по id."""
-        cache = self.cache_repo.get_dish_cache(id)
+        cache = await self.cache_repo.get_dish_cache(id)
         if not cache:
-            item = self.crud_repo.get_dish_by_id(id=id)
-            self.cache_repo.set_dish_cache(item)
+            item = await self.crud_repo.get_dish_by_id(id=id)
+            await self.cache_repo.set_dish_cache(item)
             return item
         return cache
 
-    def create_dish(self, dish: DishPost, menu_id: str,
-                    submenu_id: str) -> Dish:
+    async def create_dish(self, dish: DishPost, menu_id: str,
+                          submenu_id: str) -> Dish:
         """Добавление нового блюда."""
-        item = self.crud_repo.create_dish(dish=dish, menu_id=menu_id,
-                                          submenu_id=submenu_id)
-        self.cache_repo.create_dish_cache(item, submenu_id, menu_id)
+        item = await self.crud_repo.create_dish(dish=dish, menu_id=menu_id,
+                                                submenu_id=submenu_id)
+        await self.cache_repo.create_dish_cache(item, submenu_id, menu_id)
         return item
 
-    def update_dish(self, dish_id: str, updated_dish: DishPost) -> Dish:
+    async def update_dish(self, dish_id: str, updated_dish: DishPost) -> Dish:
         """Изменение блюда по id."""
-        item = self.crud_repo.update_dish(dish_id=dish_id,
-                                          updated_dish=updated_dish)
-        self.cache_repo.update_dish_cache(item)
+        item = await self.crud_repo.update_dish(dish_id=dish_id,
+                                                updated_dish=updated_dish)
+        await self.cache_repo.update_dish_cache(item)
         return item
 
-    def delete_dish(self, dish_id: str, submenu_id: str, menu_id: str) -> None:
+    async def delete_dish(self, dish_id: str, submenu_id: str,
+                          menu_id: str) -> None:
         """Удаление блюда по id."""
-        self.cache_repo.delete_dish_cache(dish_id, submenu_id, menu_id)
-        self.crud_repo.delete_dish(dish_id=dish_id)
+        await self.cache_repo.delete_dish_cache(dish_id, submenu_id, menu_id)
+        await self.crud_repo.delete_dish(dish_id=dish_id)

@@ -1,8 +1,8 @@
 import os
 
+from aioredis import ConnectionPool, Redis
 from dotenv import load_dotenv
-from redis import ConnectionPool, Redis
-from sqlalchemy import create_engine
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -16,21 +16,25 @@ REDIS_PORT = os.getenv('REDIS_PORT')
 EXPIRATION = 3600
 REDIS_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}/0'
 
-conn_url = (f'postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSWORD}'
+conn_url = (f'postgresql+asyncpg://{POSTGRES_USER}:{POSTGRES_PASSWORD}'
             f'@database/{POSTGRES_DB}')
-engine = create_engine(conn_url)
 Base = declarative_base()
+engine = create_async_engine(conn_url)
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+AsyncSessionLocal = sessionmaker(autocommit=False, autoflush=False,
+                                 bind=engine, class_=AsyncSession)
 
 
-def get_db():
+async def get_db():
     """Возвращает соединение с базой данных."""
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+    async with AsyncSessionLocal() as async_session:
+        yield async_session
+
+
+async def init_db():
+    """Создание таблиц."""
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
 
 
 def create_redis():

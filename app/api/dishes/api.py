@@ -15,10 +15,10 @@ dish_router = APIRouter(prefix='/api/v1/menus')
     tags=['Блюда'],
     summary='Все блюда подменю',
 )
-def get_dishes(menu_id: str, submenu_id: str,
-               repo: DishService = Depends()) -> list[DishRead]:
+async def get_dishes(menu_id: str, submenu_id: str,
+                     repo: DishService = Depends()) -> list[DishRead]:
     """Получение всех блюд конкретного подменю."""
-    return repo.get_all_dishes(submenu_id=submenu_id)
+    return await repo.get_all_dishes(submenu_id=submenu_id)
 
 
 @dish_router.post(
@@ -28,12 +28,12 @@ def get_dishes(menu_id: str, submenu_id: str,
     tags=['Блюда'],
     summary='Добавить блюдо',
 )
-def post_new_dish(menu_id: str, submenu_id: str, dish: DishPost,
-                  repo: DishService = Depends()) -> DishRead:
+async def post_new_dish(menu_id: str, submenu_id: str, dish: DishPost,
+                        repo: DishService = Depends()) -> DishRead:
     """Добавление нового блюда."""
     try:
-        return repo.create_dish(dish=dish, menu_id=menu_id,
-                                submenu_id=submenu_id)
+        return await repo.create_dish(dish=dish, menu_id=menu_id,
+                                      submenu_id=submenu_id)
     except FlushError as error:
         raise HTTPException(
             status_code=400,
@@ -53,11 +53,11 @@ def post_new_dish(menu_id: str, submenu_id: str, dish: DishPost,
     tags=['Блюда'],
     summary='Получить блюдо',
 )
-def get_dish(menu_id: str, submenu_id: str, dish_id: str,
-             repo: DishService = Depends()) -> DishRead:
+async def get_dish(menu_id: str, submenu_id: str, dish_id: str,
+                   repo: DishService = Depends()) -> DishRead:
     """Получение блюда по id."""
     try:
-        return repo.get_dish_by_id(id=dish_id)
+        return await repo.get_dish_by_id(id=dish_id)
     except NoResultFound as error:
         raise HTTPException(
             status_code=404,
@@ -72,12 +72,12 @@ def get_dish(menu_id: str, submenu_id: str, dish_id: str,
     tags=['Блюда'],
     summary='Изменить блюдо',
 )
-def patch_dish(menu_id: str, submenu_id: str, dish_id: str,
-               updated_dish: DishPost, repo: DishService = Depends()
-               ) -> DishRead:
+async def patch_dish(menu_id: str, submenu_id: str, dish_id: str,
+                     updated_dish: DishPost, repo: DishService = Depends()
+                     ) -> DishRead:
     """Изменение блюда по id."""
     try:
-        return repo.update_dish(dish_id, updated_dish)
+        return await repo.update_dish(dish_id, updated_dish)
     except FlushError as error:
         raise HTTPException(
             status_code=400,
@@ -96,12 +96,12 @@ def patch_dish(menu_id: str, submenu_id: str, dish_id: str,
     tags=['Блюда'],
     summary='Удалить блюдо',
 )
-def destroy_dish(menu_id: str, submenu_id: str, dish_id: str,
-                 repo: DishService = Depends()) -> JSONResponse:
+async def destroy_dish(menu_id: str, submenu_id: str, dish_id: str,
+                       repo: DishService = Depends()) -> JSONResponse:
     """Удаление блюда по id."""
     try:
-        repo.delete_dish(dish_id=dish_id, submenu_id=submenu_id,
-                         menu_id=menu_id)
+        await repo.delete_dish(dish_id=dish_id, submenu_id=submenu_id,
+                               menu_id=menu_id)
         return JSONResponse(
             status_code=200,
             content='dish deleted',

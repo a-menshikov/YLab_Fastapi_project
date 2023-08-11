@@ -15,10 +15,10 @@ submenu_router = APIRouter(prefix='/api/v1/menus')
     tags=['Подменю'],
     summary='Все подменю',
 )
-def get_submenus(menu_id: str,
-                 repo: SubmenuService = Depends()) -> list[SubmenuRead]:
+async def get_submenus(menu_id: str,
+                       repo: SubmenuService = Depends()) -> list[SubmenuRead]:
     """Получение всех подменю конкретного меню."""
-    return repo.get_all_submenus(menu_id=menu_id)
+    return await repo.get_all_submenus(menu_id=menu_id)
 
 
 @submenu_router.post(
@@ -28,11 +28,11 @@ def get_submenus(menu_id: str,
     tags=['Подменю'],
     summary='Добавить подменю',
 )
-def post_new_submenu(menu_id: str, submenu: SubmenuPost,
-                     repo: SubmenuService = Depends()) -> SubmenuRead:
+async def post_new_submenu(menu_id: str, submenu: SubmenuPost,
+                           repo: SubmenuService = Depends()) -> SubmenuRead:
     """Добавление нового подменю к конкретному меню."""
     try:
-        return repo.create_submenu(submenu=submenu, menu_id=menu_id)
+        return await repo.create_submenu(submenu=submenu, menu_id=menu_id)
     except FlushError as error:
         raise HTTPException(
             status_code=400,
@@ -52,11 +52,11 @@ def post_new_submenu(menu_id: str, submenu: SubmenuPost,
     tags=['Подменю'],
     summary='Получить подменю',
 )
-def get_submenu(menu_id: str, submenu_id: str,
-                repo: SubmenuService = Depends()) -> SubmenuRead:
+async def get_submenu(menu_id: str, submenu_id: str,
+                      repo: SubmenuService = Depends()) -> SubmenuRead:
     """Получение подменю конкретного меню по id."""
     try:
-        return repo.get_submenu_by_id(id=submenu_id)
+        return await repo.get_submenu_by_id(id=submenu_id)
     except NoResultFound as error:
         raise HTTPException(
             status_code=404,
@@ -71,11 +71,12 @@ def get_submenu(menu_id: str, submenu_id: str,
     tags=['Подменю'],
     summary='Изменить подменю',
 )
-def patch_submenu(menu_id: str, submenu_id: str, updated_submenu: SubmenuPost,
-                  repo: SubmenuService = Depends()) -> SubmenuRead:
+async def patch_submenu(menu_id: str, submenu_id: str,
+                        updated_submenu: SubmenuPost,
+                        repo: SubmenuService = Depends()) -> SubmenuRead:
     """Обновление подменю конкретного меню по id."""
     try:
-        return repo.update_submenu(submenu_id, updated_submenu)
+        return await repo.update_submenu(submenu_id, updated_submenu)
     except NoResultFound as error:
         raise HTTPException(
             status_code=404,
@@ -94,11 +95,11 @@ def patch_submenu(menu_id: str, submenu_id: str, updated_submenu: SubmenuPost,
     tags=['Подменю'],
     summary='Удалить подменю',
 )
-def destroy_submenu(menu_id: str, submenu_id: str,
-                    repo: SubmenuService = Depends()) -> JSONResponse:
+async def destroy_submenu(menu_id: str, submenu_id: str,
+                          repo: SubmenuService = Depends()) -> JSONResponse:
     """Удаление подменю конкретного меню по id."""
     try:
-        repo.delete_submenu(menu_id, submenu_id)
+        await repo.delete_submenu(menu_id, submenu_id)
         return JSONResponse(
             status_code=200,
             content='submenu deleted',

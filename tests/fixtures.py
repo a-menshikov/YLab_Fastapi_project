@@ -1,6 +1,36 @@
+import asyncio
 from typing import Any
 
 import pytest
+from httpx import AsyncClient
+
+from app.database.db_loader import Base, get_db
+from app.main import app
+from tests.conftest import override_db, test_engine
+
+
+@pytest.fixture(scope='session')
+def event_loop(request):
+    """Создает экземпляр стандартного цикла событий
+    для каждого тестового случая."""
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+    yield loop
+    loop.close()
+
+
+@pytest.fixture(autouse=True, scope='function')
+async def init_db():
+    """Создание таблиц."""
+    async with test_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+
+@pytest.fixture(scope='session')
+async def client():
+    """Асинхронный клиент."""
+    app.dependency_overrides = {get_db: override_db}
+    async with AsyncClient(app=app, base_url='http://test') as client:
+        yield client
 
 
 @pytest.fixture
