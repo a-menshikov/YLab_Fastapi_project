@@ -3,15 +3,17 @@ import pickle
 from aioredis import Redis
 from fastapi import Depends
 
-from app.database.db_loader import EXPIRATION, get_redis
+from app.config import (
+    DISH_LINK,
+    DISHES_LINK,
+    EXPIRATION,
+    MENU_LINK,
+    MENUS_LINK,
+    SUBMENU_LINK,
+    SUBMENUS_LINK,
+)
+from app.database.db_loader import get_redis
 from app.database.models import Dish, Menu, Submenu
-
-MENUS_LINK = 'menus/'
-MENU_LINK = 'menus/{menu_id}'
-SUBMENUS_LINK = 'menus/{menu_id}/submenus'
-SUBMENU_LINK = 'menus/{menu_id}/submenus/{submenu_id}'
-DISHES_LINK = 'menus/{menu_id}/submenus/{submenu_id}/dishes'
-DISH_LINK = 'menus/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}'
 
 
 class СacheRepository():

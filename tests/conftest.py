@@ -1,14 +1,8 @@
-import os
-
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
-POSTGRES_USER = os.getenv('POSTGRES_USER')
-POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
-POSTGRES_DB = os.getenv('POSTGRES_DB')
+from app.config import conn_url
 
-conn_url = (f'postgresql+asyncpg://{POSTGRES_USER}:{POSTGRES_PASSWORD}'
-            f'@database/{POSTGRES_DB}')
 test_engine = create_async_engine(conn_url)
 
 TestAsyncSessionLocal = sessionmaker(autocommit=False, autoflush=False,
