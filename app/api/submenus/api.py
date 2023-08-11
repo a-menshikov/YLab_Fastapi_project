@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm.exc import FlushError, NoResultFound
 
@@ -15,10 +15,14 @@ submenu_router = APIRouter(prefix='/api/v1/menus')
     tags=['Подменю'],
     summary='Все подменю',
 )
-async def get_submenus(menu_id: str,
-                       repo: SubmenuService = Depends()) -> list[SubmenuRead]:
+async def get_submenus(
+    background_tasks: BackgroundTasks,
+    menu_id: str,
+    repo: SubmenuService = Depends(),
+) -> list[SubmenuRead]:
     """Получение всех подменю конкретного меню."""
-    return await repo.get_all_submenus(menu_id=menu_id)
+    return await repo.get_all_submenus(menu_id=menu_id,
+                                       background_tasks=background_tasks)
 
 
 @submenu_router.post(
@@ -28,11 +32,16 @@ async def get_submenus(menu_id: str,
     tags=['Подменю'],
     summary='Добавить подменю',
 )
-async def post_new_submenu(menu_id: str, submenu: SubmenuPost,
-                           repo: SubmenuService = Depends()) -> SubmenuRead:
+async def post_new_submenu(
+    background_tasks: BackgroundTasks,
+    menu_id: str,
+    submenu: SubmenuPost,
+    repo: SubmenuService = Depends(),
+) -> SubmenuRead:
     """Добавление нового подменю к конкретному меню."""
     try:
-        return await repo.create_submenu(submenu=submenu, menu_id=menu_id)
+        return await repo.create_submenu(submenu=submenu, menu_id=menu_id,
+                                         background_tasks=background_tasks)
     except FlushError as error:
         raise HTTPException(
             status_code=400,
@@ -52,11 +61,16 @@ async def post_new_submenu(menu_id: str, submenu: SubmenuPost,
     tags=['Подменю'],
     summary='Получить подменю',
 )
-async def get_submenu(menu_id: str, submenu_id: str,
-                      repo: SubmenuService = Depends()) -> SubmenuRead:
+async def get_submenu(
+    background_tasks: BackgroundTasks,
+    menu_id: str,
+    submenu_id: str,
+    repo: SubmenuService = Depends(),
+) -> SubmenuRead:
     """Получение подменю конкретного меню по id."""
     try:
-        return await repo.get_submenu_by_id(id=submenu_id, menu_id=menu_id)
+        return await repo.get_submenu_by_id(id=submenu_id, menu_id=menu_id,
+                                            background_tasks=background_tasks)
     except NoResultFound as error:
         raise HTTPException(
             status_code=404,
@@ -71,12 +85,20 @@ async def get_submenu(menu_id: str, submenu_id: str,
     tags=['Подменю'],
     summary='Изменить подменю',
 )
-async def patch_submenu(menu_id: str, submenu_id: str,
-                        updated_submenu: SubmenuPost,
-                        repo: SubmenuService = Depends()) -> SubmenuRead:
+async def patch_submenu(
+    background_tasks: BackgroundTasks,
+    menu_id: str,
+    submenu_id: str,
+    updated_submenu: SubmenuPost,
+    repo: SubmenuService = Depends(),
+) -> SubmenuRead:
     """Обновление подменю конкретного меню по id."""
     try:
-        return await repo.update_submenu(submenu_id, updated_submenu)
+        return await repo.update_submenu(
+            submenu_id=submenu_id,
+            updated_submenu=updated_submenu,
+            background_tasks=background_tasks
+        )
     except NoResultFound as error:
         raise HTTPException(
             status_code=404,
@@ -95,11 +117,16 @@ async def patch_submenu(menu_id: str, submenu_id: str,
     tags=['Подменю'],
     summary='Удалить подменю',
 )
-async def destroy_submenu(menu_id: str, submenu_id: str,
-                          repo: SubmenuService = Depends()) -> JSONResponse:
+async def destroy_submenu(
+    background_tasks: BackgroundTasks,
+    menu_id: str,
+    submenu_id: str,
+    repo: SubmenuService = Depends(),
+) -> JSONResponse:
     """Удаление подменю конкретного меню по id."""
     try:
-        await repo.delete_submenu(menu_id=menu_id, submenu_id=submenu_id)
+        await repo.delete_submenu(menu_id=menu_id, submenu_id=submenu_id,
+                                  background_tasks=background_tasks)
         return JSONResponse(
             status_code=200,
             content='submenu deleted',
