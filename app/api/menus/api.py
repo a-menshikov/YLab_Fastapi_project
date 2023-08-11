@@ -14,9 +14,12 @@ menu_router = APIRouter(prefix='/api/v1')
     tags=['Меню'],
     summary='Все меню',
 )
-async def get_menus(repo: MenuService = Depends()) -> list[MenuRead]:
+async def get_menus(
+    background_tasks: BackgroundTasks,
+    repo: MenuService = Depends()
+) -> list[MenuRead]:
     """Получение всех меню."""
-    return await repo.get_all_menus()
+    return await repo.get_all_menus(background_tasks=background_tasks)
 
 
 @menu_router.post(
@@ -25,11 +28,15 @@ async def get_menus(repo: MenuService = Depends()) -> list[MenuRead]:
     tags=['Меню'],
     summary='Добавить меню',
 )
-async def post_new_menu(menu: MenuPost,
-                        repo: MenuService = Depends()) -> MenuRead:
+async def post_new_menu(
+    background_tasks: BackgroundTasks,
+    menu: MenuPost,
+    repo: MenuService = Depends()
+) -> MenuRead:
     """Добавление нового меню."""
     try:
-        return await repo.create_menu(menu=menu)
+        return await repo.create_menu(menu=menu,
+                                      background_tasks=background_tasks)
     except FlushError as error:
         raise HTTPException(
             status_code=400,
@@ -44,10 +51,15 @@ async def post_new_menu(menu: MenuPost,
     tags=['Меню'],
     summary='Получить меню',
 )
-async def get_menu(menu_id: str, repo: MenuService = Depends()) -> MenuRead:
+async def get_menu(
+    background_tasks: BackgroundTasks,
+    menu_id: str,
+    repo: MenuService = Depends(),
+) -> MenuRead:
     """Получение меню по id."""
     try:
-        return await repo.get_menu_by_id(id=menu_id)
+        return await repo.get_menu_by_id(id=menu_id,
+                                         background_tasks=background_tasks)
     except NoResultFound as error:
         raise HTTPException(
             status_code=404,
@@ -62,11 +74,19 @@ async def get_menu(menu_id: str, repo: MenuService = Depends()) -> MenuRead:
     tags=['Меню'],
     summary='Изменить меню',
 )
-async def patch_menu(menu_id: str, updated_menu: MenuPost,
-                     repo: MenuService = Depends()) -> MenuRead:
+async def patch_menu(
+    background_tasks: BackgroundTasks,
+    menu_id: str,
+    updated_menu: MenuPost,
+    repo: MenuService = Depends(),
+) -> MenuRead:
     """Изменение меню по id."""
     try:
-        return await repo.update_menu(menu_id, updated_menu)
+        return await repo.update_menu(
+            menu_id=menu_id,
+            updated_menu=updated_menu,
+            background_tasks=background_tasks,
+        )
     except NoResultFound as error:
         raise HTTPException(
             status_code=404,
@@ -110,6 +130,9 @@ async def destroy_menu(menu_id: str,
     tags=['Меню'],
     summary='Развернутая структура всей базы меню со связанными объектами',
 )
-async def get_full_base_menu(repo: MenuService = Depends()):
+async def get_full_base_menu(
+    background_tasks: BackgroundTasks,
+    repo: MenuService = Depends()
+) -> list[MenuReadFullGet]:
     """Получение всех меню c развернутым списком блюд и подменю."""
-    return await repo.get_full_base_menu()
+    return await repo.get_full_base_menu(background_tasks=background_tasks)
