@@ -3,13 +3,14 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.orm.exc import FlushError, NoResultFound
 
 from app.api.submenus.service_repository import SubmenuService
+from app.config import SUBMENU_LINK, SUBMENUS_LINK
 from app.database.schemas import SubmenuPost, SubmenuRead
 
-submenu_router = APIRouter(prefix='/api/v1/menus')
+submenu_router = APIRouter(prefix='/api/v1')
 
 
 @submenu_router.get(
-    '/{menu_id}/submenus',
+    SUBMENUS_LINK,
     response_model=list[SubmenuRead],
     status_code=200,
     tags=['Подменю'],
@@ -26,7 +27,7 @@ async def get_submenus(
 
 
 @submenu_router.post(
-    '/{menu_id}/submenus',
+    SUBMENUS_LINK,
     response_model=SubmenuRead,
     status_code=201,
     tags=['Подменю'],
@@ -55,7 +56,7 @@ async def post_new_submenu(
 
 
 @submenu_router.get(
-    '/{menu_id}/submenus/{submenu_id}',
+    SUBMENU_LINK,
     response_model=SubmenuRead,
     status_code=200,
     tags=['Подменю'],
@@ -79,7 +80,7 @@ async def get_submenu(
 
 
 @submenu_router.patch(
-    '/{menu_id}/submenus/{submenu_id}',
+    SUBMENU_LINK,
     response_model=SubmenuRead,
     status_code=200,
     tags=['Подменю'],
@@ -112,7 +113,7 @@ async def patch_submenu(
 
 
 @submenu_router.delete(
-    '/{menu_id}/submenus/{submenu_id}',
+    SUBMENU_LINK,
     status_code=200,
     tags=['Подменю'],
     summary='Удалить подменю',

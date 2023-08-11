@@ -3,13 +3,14 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.orm.exc import FlushError, NoResultFound
 
 from app.api.dishes.service_repository import DishService
+from app.config import DISH_LINK, DISHES_LINK
 from app.database.schemas import DishPost, DishRead
 
-dish_router = APIRouter(prefix='/api/v1/menus')
+dish_router = APIRouter(prefix='/api/v1')
 
 
 @dish_router.get(
-    '/{menu_id}/submenus/{submenu_id}/dishes',
+    DISHES_LINK,
     response_model=list[DishRead],
     status_code=200,
     tags=['Блюда'],
@@ -30,7 +31,7 @@ async def get_dishes(
 
 
 @dish_router.post(
-    '/{menu_id}/submenus/{submenu_id}/dishes',
+    DISHES_LINK,
     response_model=DishRead,
     status_code=201,
     tags=['Блюда'],
@@ -64,7 +65,7 @@ async def post_new_dish(
 
 
 @dish_router.get(
-    '/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}',
+    DISH_LINK,
     response_model=DishRead,
     status_code=200,
     tags=['Блюда'],
@@ -93,7 +94,7 @@ async def get_dish(
 
 
 @dish_router.patch(
-    '/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}',
+    DISH_LINK,
     response_model=DishRead,
     status_code=200,
     tags=['Блюда'],
@@ -129,7 +130,7 @@ async def patch_dish(
 
 
 @dish_router.delete(
-    '/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}',
+    DISH_LINK,
     status_code=200,
     tags=['Блюда'],
     summary='Удалить блюдо',

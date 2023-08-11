@@ -3,13 +3,14 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.orm.exc import FlushError, NoResultFound
 
 from app.api.menus.service_repository import MenuService
+from app.config import MENU_LINK, MENUS_LINK
 from app.database.schemas import MenuPost, MenuRead, MenuReadFullGet
 
 menu_router = APIRouter(prefix='/api/v1')
 
 
 @menu_router.get(
-    '/menus', response_model=list[MenuRead],
+    MENUS_LINK, response_model=list[MenuRead],
     status_code=200,
     tags=['Меню'],
     summary='Все меню',
@@ -23,7 +24,7 @@ async def get_menus(
 
 
 @menu_router.post(
-    '/menus', response_model=MenuRead,
+    MENUS_LINK, response_model=MenuRead,
     status_code=201,
     tags=['Меню'],
     summary='Добавить меню',
@@ -45,7 +46,7 @@ async def post_new_menu(
 
 
 @menu_router.get(
-    '/menus/{menu_id}',
+    MENU_LINK,
     response_model=MenuRead,
     status_code=200,
     tags=['Меню'],
@@ -68,7 +69,7 @@ async def get_menu(
 
 
 @menu_router.patch(
-    '/menus/{menu_id}',
+    MENU_LINK,
     response_model=MenuRead,
     status_code=200,
     tags=['Меню'],
