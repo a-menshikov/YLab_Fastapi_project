@@ -1,4 +1,4 @@
-from fastapi import Depends
+from fastapi import BackgroundTasks, Depends
 
 from app.api.menus.crud_repository import MenuRepository
 from app.database.cache_repository import СacheRepository
@@ -54,7 +54,8 @@ class MenuService:
         await self.cache_repo.create_update_menu_cache(item)
         return item
 
-    async def delete_menu(self, menu_id: str) -> None:
+    async def delete_menu(self, menu_id: str,
+                          background_tasks: BackgroundTasks) -> None:
         """Удаление меню по id."""
-        await self.cache_repo.delete_menu_cache(menu_id)
+        background_tasks.add_task(self.cache_repo.delete_menu_cache, menu_id)
         await self.crud_repo.delete_menu(menu_id=menu_id)

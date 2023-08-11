@@ -23,9 +23,9 @@ class SubmenuService:
         await self.cache_repo.set_all_submenus_cache(menu_id, items)
         return items
 
-    async def get_submenu_by_id(self, id: str) -> Submenu:
+    async def get_submenu_by_id(self, id: str, menu_id: str) -> Submenu:
         """Получение подменю по id."""
-        cache = await self.cache_repo.get_submenu_cache(id)
+        cache = await self.cache_repo.get_submenu_cache(id, menu_id)
         if cache:
             return cache
         item = await self.crud_repo.get_submenu_by_id(id=id)
@@ -52,6 +52,7 @@ class SubmenuService:
 
     async def delete_submenu(self, menu_id: str, submenu_id: str) -> None:
         """Удаление подменю конкретного меню по id."""
-        await self.cache_repo.delete_submenu_cache(submenu_id, menu_id)
+        await self.cache_repo.delete_submenu_cache(submenu_id=submenu_id,
+                                                   menu_id=menu_id)
         await self.crud_repo.delete_submenu(menu_id=menu_id,
                                             submenu_id=submenu_id)

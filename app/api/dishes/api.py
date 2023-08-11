@@ -18,7 +18,7 @@ dish_router = APIRouter(prefix='/api/v1/menus')
 async def get_dishes(menu_id: str, submenu_id: str,
                      repo: DishService = Depends()) -> list[DishRead]:
     """Получение всех блюд конкретного подменю."""
-    return await repo.get_all_dishes(submenu_id=submenu_id)
+    return await repo.get_all_dishes(submenu_id=submenu_id, menu_id=menu_id)
 
 
 @dish_router.post(
@@ -57,7 +57,8 @@ async def get_dish(menu_id: str, submenu_id: str, dish_id: str,
                    repo: DishService = Depends()) -> DishRead:
     """Получение блюда по id."""
     try:
-        return await repo.get_dish_by_id(id=dish_id)
+        return await repo.get_dish_by_id(id=dish_id, menu_id=menu_id,
+                                         submenu_id=submenu_id)
     except NoResultFound as error:
         raise HTTPException(
             status_code=404,
@@ -77,7 +78,12 @@ async def patch_dish(menu_id: str, submenu_id: str, dish_id: str,
                      ) -> DishRead:
     """Изменение блюда по id."""
     try:
-        return await repo.update_dish(dish_id, updated_dish)
+        return await repo.update_dish(
+            dish_id=dish_id,
+            submenu_id=submenu_id,
+            menu_id=menu_id,
+            updated_dish=updated_dish,
+        )
     except FlushError as error:
         raise HTTPException(
             status_code=400,

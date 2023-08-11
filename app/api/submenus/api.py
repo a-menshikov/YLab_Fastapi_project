@@ -56,7 +56,7 @@ async def get_submenu(menu_id: str, submenu_id: str,
                       repo: SubmenuService = Depends()) -> SubmenuRead:
     """Получение подменю конкретного меню по id."""
     try:
-        return await repo.get_submenu_by_id(id=submenu_id)
+        return await repo.get_submenu_by_id(id=submenu_id, menu_id=menu_id)
     except NoResultFound as error:
         raise HTTPException(
             status_code=404,
@@ -99,7 +99,7 @@ async def destroy_submenu(menu_id: str, submenu_id: str,
                           repo: SubmenuService = Depends()) -> JSONResponse:
     """Удаление подменю конкретного меню по id."""
     try:
-        await repo.delete_submenu(menu_id, submenu_id)
+        await repo.delete_submenu(menu_id=menu_id, submenu_id=submenu_id)
         return JSONResponse(
             status_code=200,
             content='submenu deleted',

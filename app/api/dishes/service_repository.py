@@ -14,22 +14,24 @@ class DishService:
         self.crud_repo = crud_repo
         self.cache_repo = cache_repo
 
-    async def get_all_dishes(self, submenu_id: str) -> list[Dish]:
+    async def get_all_dishes(self, submenu_id: str,
+                             menu_id: str) -> list[Dish]:
         """Получение всех блюд."""
-        cache = await self.cache_repo.get_all_dishes_cache(submenu_id)
+        cache = await self.cache_repo.get_all_dishes_cache(menu_id, submenu_id)
         if cache:
             return cache
         items = await self.crud_repo.get_all_dishes(submenu_id=submenu_id)
-        await self.cache_repo.set_all_dishes_cache(submenu_id, items)
+        await self.cache_repo.set_all_dishes_cache(menu_id, submenu_id, items)
         return items
 
-    async def get_dish_by_id(self, id: str) -> Dish:
+    async def get_dish_by_id(self, id: str, menu_id: str,
+                             submenu_id: str) -> Dish:
         """Получение блюда по id."""
-        cache = await self.cache_repo.get_dish_cache(id)
+        cache = await self.cache_repo.get_dish_cache(id, menu_id, submenu_id)
         if cache:
             return cache
         item = await self.crud_repo.get_dish_by_id(id=id)
-        await self.cache_repo.set_dish_cache(item)
+        await self.cache_repo.set_dish_cache(item, submenu_id, menu_id)
         return item
 
     async def create_dish(self, dish: DishPost, menu_id: str,
@@ -40,11 +42,13 @@ class DishService:
         await self.cache_repo.create_dish_cache(item, submenu_id, menu_id)
         return item
 
-    async def update_dish(self, dish_id: str, updated_dish: DishPost) -> Dish:
+    async def update_dish(self, dish_id: str, submenu_id: str, menu_id: str,
+                          updated_dish: DishPost) -> Dish:
         """Изменение блюда по id."""
         item = await self.crud_repo.update_dish(dish_id=dish_id,
                                                 updated_dish=updated_dish)
-        await self.cache_repo.update_dish_cache(item)
+        await self.cache_repo.update_dish_cache(item, submenu_id=submenu_id,
+                                                menu_id=menu_id)
         return item
 
     async def delete_dish(self, dish_id: str, submenu_id: str,

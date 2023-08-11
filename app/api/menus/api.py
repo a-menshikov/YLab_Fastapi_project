@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm.exc import FlushError, NoResultFound
 
@@ -86,10 +86,12 @@ async def patch_menu(menu_id: str, updated_menu: MenuPost,
     summary='Удалить меню',
 )
 async def destroy_menu(menu_id: str,
-                       repo: MenuService = Depends()) -> JSONResponse:
+                       background_tasks: BackgroundTasks,
+                       repo: MenuService = Depends(),) -> JSONResponse:
     """Удаление меню по id."""
     try:
-        await repo.delete_menu(menu_id=menu_id)
+        await repo.delete_menu(menu_id=menu_id,
+                               background_tasks=background_tasks)
         return JSONResponse(
             status_code=200,
             content='menu deleted',
