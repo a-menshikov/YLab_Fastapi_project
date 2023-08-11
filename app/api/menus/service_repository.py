@@ -17,20 +17,20 @@ class MenuService:
     async def get_all_menus(self) -> list[Menu]:
         """Получение всех меню."""
         cache = await self.cache_repo.get_all_menus_cache()
-        if not cache:
-            items = await self.crud_repo.get_all_menus()
-            await self.cache_repo.set_all_menus_cache(items)
-            return items
-        return cache
+        if cache:
+            return cache
+        items = await self.crud_repo.get_all_menus()
+        await self.cache_repo.set_all_menus_cache(items)
+        return items
 
     async def get_menu_by_id(self, id: str) -> Menu:
         """Получение меню по id."""
         cache = await self.cache_repo.get_menu_cache(id)
-        if not cache:
-            item = await self.crud_repo.get_menu_by_id(id=id)
-            await self.cache_repo.set_menu_cache(item)
-            return item
-        return cache
+        if cache:
+            return cache
+        item = await self.crud_repo.get_menu_by_id(id=id)
+        await self.cache_repo.set_menu_cache(item)
+        return item
 
     async def create_menu(self, menu: MenuPost) -> Menu:
         """Добавление нового меню."""

@@ -17,20 +17,20 @@ class DishService:
     async def get_all_dishes(self, submenu_id: str) -> list[Dish]:
         """Получение всех блюд."""
         cache = await self.cache_repo.get_all_dishes_cache(submenu_id)
-        if not cache:
-            items = await self.crud_repo.get_all_dishes(submenu_id=submenu_id)
-            await self.cache_repo.set_all_dishes_cache(submenu_id, items)
-            return items
-        return cache
+        if cache:
+            return cache
+        items = await self.crud_repo.get_all_dishes(submenu_id=submenu_id)
+        await self.cache_repo.set_all_dishes_cache(submenu_id, items)
+        return items
 
     async def get_dish_by_id(self, id: str) -> Dish:
         """Получение блюда по id."""
         cache = await self.cache_repo.get_dish_cache(id)
-        if not cache:
-            item = await self.crud_repo.get_dish_by_id(id=id)
-            await self.cache_repo.set_dish_cache(item)
-            return item
-        return cache
+        if cache:
+            return cache
+        item = await self.crud_repo.get_dish_by_id(id=id)
+        await self.cache_repo.set_dish_cache(item)
+        return item
 
     async def create_dish(self, dish: DishPost, menu_id: str,
                           submenu_id: str) -> Dish:

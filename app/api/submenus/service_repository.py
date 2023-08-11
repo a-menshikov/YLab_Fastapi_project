@@ -17,20 +17,20 @@ class SubmenuService:
     async def get_all_submenus(self, menu_id: str) -> list[Submenu]:
         """Получение всех подменю."""
         cache = await self.cache_repo.get_all_submenus_cache(menu_id)
-        if not cache:
-            items = await self.crud_repo.get_all_submenus(menu_id=menu_id)
-            await self.cache_repo.set_all_submenus_cache(menu_id, items)
-            return items
-        return cache
+        if cache:
+            return cache
+        items = await self.crud_repo.get_all_submenus(menu_id=menu_id)
+        await self.cache_repo.set_all_submenus_cache(menu_id, items)
+        return items
 
     async def get_submenu_by_id(self, id: str) -> Submenu:
         """Получение подменю по id."""
         cache = await self.cache_repo.get_submenu_cache(id)
-        if not cache:
-            item = await self.crud_repo.get_submenu_by_id(id=id)
-            await self.cache_repo.set_submenu_cache(item)
-            return item
-        return cache
+        if cache:
+            return cache
+        item = await self.crud_repo.get_submenu_by_id(id=id)
+        await self.cache_repo.set_submenu_cache(item)
+        return item
 
     async def create_submenu(self, submenu: SubmenuPost,
                              menu_id: str) -> Submenu:
