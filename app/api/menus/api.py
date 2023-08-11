@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.orm.exc import FlushError, NoResultFound
 
 from app.api.menus.service_repository import MenuService
-from app.database.schemas import MenuPost, MenuRead
+from app.database.schemas import MenuPost, MenuRead, MenuReadFullGet
 
 menu_router = APIRouter(prefix='/api/v1')
 
@@ -99,3 +99,15 @@ async def destroy_menu(menu_id: str,
             status_code=404,
             detail=error.args[0],
         )
+
+
+@menu_router.get(
+    '/fullbase',
+    status_code=200,
+    response_model=list[MenuReadFullGet],
+    tags=['Меню'],
+    summary='Развернутая структура всей базы меню со связанными объектами',
+)
+async def get_full_base_menu(repo: MenuService = Depends()):
+    """Получение всех меню c развернутым списком блюд и подменю."""
+    return await repo.get_full_base_menu()

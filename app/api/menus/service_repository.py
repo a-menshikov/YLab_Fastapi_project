@@ -14,6 +14,15 @@ class MenuService:
         self.crud_repo = crud_repo
         self.cache_repo = cache_repo
 
+    async def get_full_base_menu(self) -> list[Menu]:
+        """Получение всех меню c развернутым списком блюд и подменю."""
+        cache = await self.cache_repo.get_full_base_menu_cache()
+        if cache:
+            return cache
+        items = await self.crud_repo.get_full_base_menu()
+        await self.cache_repo.set_full_base_menu_cache(items)
+        return items
+
     async def get_all_menus(self) -> list[Menu]:
         """Получение всех меню."""
         cache = await self.cache_repo.get_all_menus_cache()

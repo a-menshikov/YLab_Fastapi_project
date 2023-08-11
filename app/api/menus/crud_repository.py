@@ -1,10 +1,11 @@
 from fastapi import Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 from sqlalchemy.orm.exc import FlushError, NoResultFound
 
 from app.database.db_loader import get_db
-from app.database.models import Menu
+from app.database.models import Menu, Submenu
 from app.database.schemas import MenuPost
 from app.database.services import check_unique_menu
 
@@ -69,3 +70,11 @@ class MenuRepository:
             raise NoResultFound('menu not found')
         await self.db.delete(current_menu)
         await self.db.commit()
+
+    async def get_full_base_menu(self) -> list[Menu]:
+        """Получение всех меню c развернутым списком блюд и подменю."""
+        return (await self.db.execute(
+            select(self.model).options(selectinload(
+                Menu.submenus
+            ).options(selectinload(Submenu.dishes)))
+        )).scalars().fetchall()

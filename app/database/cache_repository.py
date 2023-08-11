@@ -146,6 +146,19 @@ class СacheRepository():
             return items
         return None
 
+    async def set_full_base_menu_cache(self, items: list[Menu]) -> None:
+        """Запись древовидной структуры базы в кэш."""
+        await self.cacher.set('full_base_menu', pickle.dumps(items),
+                              ex=EXPIRATION)
+
+    async def get_full_base_menu_cache(self) -> list[Menu] | None:
+        """Получение древовидной структуры базы из кеша."""
+        cache = await self.cacher.get('full_base_menu')
+        if cache:
+            items = pickle.loads(cache)
+            return items
+        return None
+
     async def set_menu_cache(self, item: Menu) -> None:
         """Запись меню в кеш."""
         await self.cacher.set(str(item.id), pickle.dumps(item), ex=EXPIRATION)
@@ -166,6 +179,7 @@ class СacheRepository():
     async def delete_all_menu_cache(self) -> None:
         """Удаление всех меню из кеша."""
         await self.cacher.delete('all_menus')
+        await self.cacher.delete('full_base_menu')
 
     async def delete_menu_cache(self, menu_id: str) -> None:
         """Работа с кэшем при удалении меню."""
