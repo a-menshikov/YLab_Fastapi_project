@@ -17,20 +17,25 @@ class MenuPost(MenuBase):
     pass
 
 
-class MenuRead(MenuBase):
-    """Схема для чтения меню."""
+class MenuWithID(MenuBase):
+    """Базовая схема меню c id."""
 
     id: UUID
-    submenus_count: int
-    dishes_count: int
-
-    class Config:
-        orm_mode = True
 
     @validator('id')
     def validate_id(cls, value: UUID) -> str:
         """Перевод id в строку для вывода"""
         return str(value)
+
+
+class MenuRead(MenuWithID):
+    """Схема для чтения меню."""
+
+    submenus_count: int
+    dishes_count: int
+
+    class Config:
+        orm_mode = True
 
 
 class SubmenuBase(BaseModel):
@@ -40,26 +45,31 @@ class SubmenuBase(BaseModel):
     description: str
 
 
+class SubmenuWithID(SubmenuBase):
+    """Базовая схема подменю c id."""
+
+    id: UUID
+
+    @validator('id')
+    def validate_id(cls, value: UUID) -> str:
+        """Перевод id в строку для вывода"""
+        return str(value)
+
+
 class SubmenuPost(SubmenuBase):
     """Схема для создания нового меню."""
 
     pass
 
 
-class SubmenuRead(SubmenuBase):
+class SubmenuRead(SubmenuWithID):
     """Схема для чтения меню."""
 
-    id: UUID
     menu_id: UUID
     dishes_count: int
 
     class Config:
         orm_mode = True
-
-    @validator('id')
-    def validate_id(cls, value: UUID) -> str:
-        """Перевод id в строку для вывода"""
-        return str(value)
 
     @validator('menu_id')
     def validate_submenu_id(cls, value: UUID) -> str:
@@ -74,6 +84,17 @@ class DishBase(BaseModel):
     description: str
 
 
+class DishWithID(DishBase):
+    """Базовая схема Блюда c id."""
+
+    id: UUID
+
+    @validator('id')
+    def validate_id(cls, value: UUID) -> str:
+        """Перевод id в строку для вывода"""
+        return str(value)
+
+
 class DishPost(DishBase):
     """Схема для создания нового блюда."""
 
@@ -85,10 +106,9 @@ class DishPost(DishBase):
         return Decimal(value).quantize(Decimal('0.00'))
 
 
-class DishRead(DishBase):
+class DishRead(DishWithID):
     """Схема для чтения блюда."""
 
-    id: UUID
     submenu_id: UUID
     price: Decimal
 
@@ -100,12 +120,42 @@ class DishRead(DishBase):
         """Перевод цены в строку для вывода"""
         return str(value)
 
-    @validator('id')
-    def validate_id(cls, value: UUID) -> str:
-        """Перевод id в строку для вывода"""
-        return str(value)
-
     @validator('submenu_id')
     def validate_submenu_id(cls, value: UUID) -> str:
         """Перевод submenu_id в строку для вывода"""
         return str(value)
+
+
+class DishReadFullGet(DishWithID):
+    """Схема для чтения блюда при полной выдаче базы."""
+
+    price: Decimal
+
+    class Config:
+        extra = 'ignore'
+        orm_mode = True
+
+    @validator('price')
+    def validate_price(cls, value: Decimal) -> str:
+        """Перевод цены в строку для вывода"""
+        return str(value)
+
+
+class SubmenuReadFullGet(SubmenuWithID):
+    """Схема для чтения подменю при полной выдаче базы."""
+
+    dishes: list[DishReadFullGet]
+
+    class Config:
+        extra = 'ignore'
+        orm_mode = True
+
+
+class MenuReadFullGet(MenuWithID):
+    """Схема для чтения меню при полной выдаче базы."""
+
+    submenus: list[SubmenuReadFullGet]
+
+    class Config:
+        extra = 'ignore'
+        orm_mode = True
