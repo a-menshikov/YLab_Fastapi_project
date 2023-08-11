@@ -208,7 +208,7 @@ async def test_get_patched_dish(saved_data: dict[str, Any],
 
 async def test_delete_dish(saved_data: dict[str, Any],
                            client: AsyncClient) -> None:
-    """Удаление текущего подменю."""
+    """Удаление текущего блюда."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     dish = saved_data['dish']
