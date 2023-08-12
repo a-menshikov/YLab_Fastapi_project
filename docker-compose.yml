@@ -50,6 +50,8 @@ services:
     restart: always
     networks:
       - ylab_network
+    volumes:
+      - /mnt/e/DEV/admin:/code/app/admin
     depends_on:
       database:
         condition: service_healthy
@@ -60,6 +62,45 @@ services:
     env_file:
       - .env
 
+  # rabbitmq:
+  #   image: rabbitmq:latest
+  #   hostname: rabbitmq
+  #   restart: always
+  #   container_name: rabbitmq
+  #   networks:
+  #     - ylab_network
+  #   volumes:
+  #     - ylab_rabbit_data:/var/lib/rabbitmq
+  #   env_file:
+  #     - .env
+  #   ports:
+  #     - 5672:5672
+  #   depends_on:
+  #     - backend
+  #   healthcheck:
+  #     test: rabbitmq-diagnostics -q ping
+  #     interval: 30s
+  #     timeout: 30s
+  #     retries: 3
+
+  celery:
+      build:
+        context: .
+        dockerfile: Dockerfile
+      env_file:
+        - .env
+      container_name: celery
+      restart: always
+      volumes:
+      - /mnt/e/DEV/admin:/code/app/admin
+      networks:
+        - ylab_network
+      command: ["celery", "--app=app.tasks.tasks:celery", "worker", "-l", "INFO"]
+      depends_on:
+        - backend
+        # rabbitmq:
+        #   condition: service_healthy
+
 networks:
   ylab_network:
     name: ylab_network
@@ -68,3 +109,5 @@ volumes:
     name: ylab_pgdata
   ylab_redis_data:
     name: ylab_redis_data
+  # ylab_rabbit_data:
+  #   name: ylab_rabbit_data
