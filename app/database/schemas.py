@@ -14,7 +14,7 @@ class MenuBase(BaseModel):
 class MenuPost(MenuBase):
     """Схема для создания нового меню."""
 
-    pass
+    id: str | None
 
 
 class MenuWithID(MenuBase):
@@ -59,7 +59,7 @@ class SubmenuWithID(SubmenuBase):
 class SubmenuPost(SubmenuBase):
     """Схема для создания нового меню."""
 
-    pass
+    id: str | None
 
 
 class SubmenuRead(SubmenuWithID):
@@ -98,6 +98,7 @@ class DishWithID(DishBase):
 class DishPost(DishBase):
     """Схема для создания нового блюда."""
 
+    id: str | None
     price: str
 
     @validator('price')
