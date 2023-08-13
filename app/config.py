@@ -24,5 +24,7 @@ RABBITMQ_HOST = os.getenv('RABBITMQ_HOST')
 
 EXPIRATION = 3600
 
+MENU_FILE_PATH = '/code/app/admin/Menu.xlsx'
+
 conn_url = (f'postgresql+asyncpg://{POSTGRES_USER}:{POSTGRES_PASSWORD}'
             f'@database/{POSTGRES_DB}')
