@@ -10,11 +10,11 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ylab_pgdata_test:/var/lib/postgresql/data/
+      - ylab_pgdata_pytest:/var/lib/postgresql/data/
     env_file:
-      - .env
+      - .env_test
     networks:
-      - ylab_network_test
+      - ylab_network_pytest
     healthcheck:
       test: ["CMD-SHELL", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
       interval: 10s
@@ -25,15 +25,15 @@ services:
     image: redis:latest
     container_name: redis
     networks:
-      - ylab_network_test
+      - ylab_network_pytest
     volumes:
-      - ylab_redis_data_test:/data
+      - ylab_redis_data_pytest:/data
     expose:
       - "6379"
     ports:
       - "6379:6379"
     env_file:
-      - .env
+      - .env_test
     healthcheck:
       test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
       interval: 1s
@@ -46,7 +46,7 @@ services:
       dockerfile: Dockerfile
     container_name: backend
     networks:
-      - ylab_network_test
+      - ylab_network_pytest
     depends_on:
       database:
         condition: service_healthy
@@ -55,14 +55,14 @@ services:
     ports:
       - "8000:80"
     env_file:
-      - .env
+      - .env_test
     command: sh -c "pytest -v"
 
 networks:
-  ylab_network_test:
-    name: ylab_network_test
+  ylab_network_pytest:
+    name: ylab_network_pytest
 volumes:
-  ylab_pgdata_test:
-    name: ylab_pgdata_test
-  ylab_redis_data_test:
-    name: ylab_redis_data_test
+  ylab_pgdata_pytest:
+    name: ylab_pgdata_pytest
+  ylab_redis_data_pytest:
+    name: ylab_redis_data_pytest

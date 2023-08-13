@@ -57,6 +57,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     ports:
       - "8000:80"
     env_file:
@@ -75,13 +77,11 @@ services:
       - .env
     ports:
       - 5672:5672
-    depends_on:
-      - backend
     healthcheck:
       test: rabbitmq-diagnostics -q ping
-      interval: 30s
+      interval: 10s
       timeout: 30s
-      retries: 3
+      retries: 5
 
   celery:
       build:
@@ -95,8 +95,7 @@ services:
         - ylab_network
       command: ["celery", "--app=app.tasks.tasks:celery", "worker", "-l", "INFO"]
       depends_on:
-        rabbitmq:
-          condition: service_healthy
+        - backend
 
 networks:
   ylab_network:

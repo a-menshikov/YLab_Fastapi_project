@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from app.api.dishes.api import dish_router
 from app.api.menus.api import menu_router
 from app.api.submenus.api import submenu_router
+from app.config import CELERY_STATUS
 from app.database.db_loader import init_db
 from app.tasks.tasks import update_base
 
@@ -32,7 +33,8 @@ async def on_startup():
     """Выполняется при запуске приложения.
     Инициализирует БД и запускает задачу обновления БД."""
     await init_db()
-    update_base.delay()
+    if CELERY_STATUS:
+        update_base.delay()
 
 
 app.include_router(menu_router)

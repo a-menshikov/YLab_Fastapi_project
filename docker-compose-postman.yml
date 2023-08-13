@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+
+  database:
+    image: postgres:15.1-alpine
+    container_name: database
+    restart: always
+    expose:
+      - "5432"
+    ports:
+      - "5432:5432"
+    volumes:
+      - ylab_pgdata_postman:/var/lib/postgresql/data/
+    env_file:
+      - .env_test
+    networks:
+      - ylab_network_postman
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 30s
+      retries: 5
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    networks:
+      - ylab_network_postman
+    volumes:
+      - ylab_redis_data_postman:/data
+    expose:
+      - "6379"
+    ports:
+      - "6379:6379"
+    env_file:
+      - .env_test
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: backend
+    restart: always
+    networks:
+      - ylab_network_postman
+    depends_on:
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "8000:80"
+    env_file:
+      - .env_test
+
+networks:
+  ylab_network_postman:
+    name: ylab_network_postman
+volumes:
+  ylab_pgdata_postman:
+    name: ylab_pgdata_postman
+  ylab_redis_data_postman:
+    name: ylab_redis_data_postman

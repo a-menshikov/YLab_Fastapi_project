@@ -27,5 +27,7 @@ EXPIRATION = 3600
 
 MENU_FILE_PATH = '/code/app/admin/Menu.xlsx'
 
+CELERY_STATUS = os.getenv('CELERY_STATUS') == 'true'
+
 conn_url = (f'postgresql+asyncpg://{POSTGRES_USER}:{POSTGRES_PASSWORD}'
             f'@database/{POSTGRES_DB}')
