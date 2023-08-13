@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+PREFIX_LINK = 'http://backend:80/api/v1'
 MENUS_LINK = '/menus'
 MENU_LINK = '/menus/{menu_id}'
 SUBMENUS_LINK = '/menus/{menu_id}/submenus'
