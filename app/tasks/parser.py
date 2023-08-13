@@ -18,7 +18,7 @@ class ParserRepo:
         dish['id'] = cells[0].value
         dish['title'] = cells[1].value
         dish['description'] = cells[2].value
-        dish['price'] = cells[3].value
+        dish['price'] = str(cells[3].value).replace(',', '.')
         return dish
 
     def make_submenu(self, row: int, max_row: int) -> dict:
