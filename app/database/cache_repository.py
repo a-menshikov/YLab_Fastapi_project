@@ -179,7 +179,7 @@ class СacheRepository():
 
     async def set_menu_cache(self, item: Menu) -> None:
         """Запись меню в кеш."""
-        await self.cacher.set(MENUS_LINK.format(menu_id=str(item.id)),
+        await self.cacher.set(MENU_LINK.format(menu_id=str(item.id)),
                               pickle.dumps(item), ex=EXPIRATION)
 
     async def get_menu_cache(self, id: str) -> Menu | None:
