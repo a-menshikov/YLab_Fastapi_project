@@ -1,13 +1,18 @@
 from openpyxl import load_workbook
+from openpyxl.worksheet.worksheet import Worksheet
+
+from app.config import MENU_FILE_PATH
 
 
 class ParserRepo:
+    """Сервисный репозиторий для парсинга объектов из файла."""
 
     def __init__(self):
-        self.sheet = load_workbook(filename='/code/app/admin/Menu.xlsx').active
-        self.parse_result = []
+        self.sheet: Worksheet = load_workbook(filename=MENU_FILE_PATH).active
+        self.parse_result: list = []
 
-    def make_dish(self, row: int):
+    def make_dish(self, row: int) -> dict:
+        """Собрать словарь с данными о блюде из файла."""
         dish: dict[str, str] = {}
         cells = self.sheet[f'C{row}':f'F{row}'][0]  # type: ignore
         dish['id'] = cells[0].value
@@ -16,7 +21,8 @@ class ParserRepo:
         dish['price'] = cells[3].value
         return dish
 
-    def make_submenu(self, row: int, max_row: int):
+    def make_submenu(self, row: int, max_row: int) -> dict:
+        """Собрать словарь с данными о подменю из файла."""
         submenu: dict = {
             'dishes': [],
         }
@@ -33,7 +39,8 @@ class ParserRepo:
                     break
         return submenu
 
-    def make_menu(self, row: int, max_row: int):
+    def make_menu(self, row: int, max_row: int) -> dict:
+        """Собрать словарь с данными о меню из файла."""
         menu: dict = {
             'submenus': [],
         }
@@ -50,7 +57,8 @@ class ParserRepo:
                     break
         return menu
 
-    def parser(self):
+    def parser(self) -> list[dict[str, str | list]]:
+        """Парсинг файла."""
         for i in range(1, self.sheet.max_row + 1):
             if self.sheet[f'A{i}'].value:
                 self.parse_result.append(self.make_menu(i, self.sheet.max_row))
