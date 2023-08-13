@@ -10,7 +10,8 @@ menu_router = APIRouter(prefix='/api/v1')
 
 
 @menu_router.get(
-    MENUS_LINK, response_model=list[MenuRead],
+    MENUS_LINK,
+    response_model=list[MenuRead],
     status_code=200,
     tags=['Меню'],
     summary='Все меню',
