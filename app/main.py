@@ -4,7 +4,7 @@ from app.api.dishes.api import dish_router
 from app.api.menus.api import menu_router
 from app.api.submenus.api import submenu_router
 from app.database.db_loader import init_db
-from app.tasks.tasks import task_test
+from app.tasks.tasks import update_base
 
 app = FastAPI(
     title='Restaurant API',
@@ -29,8 +29,10 @@ app = FastAPI(
 
 @app.on_event('startup')
 async def on_startup():
+    """Выполняется при запуске приложения.
+    Инициализирует БД и запускает задачу обновления БД."""
     await init_db()
-    task_test.delay()
+    update_base.delay()
 
 
 app.include_router(menu_router)
