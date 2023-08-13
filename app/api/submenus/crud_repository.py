@@ -29,12 +29,21 @@ class SubmenuRepository:
         try:
             await check_unique_submenu(db=self.db, submenu=submenu)
         except FlushError:
-            raise FlushError('Подменю с таким названием уже есть')
-        new_submenu = Submenu(
-            title=submenu.title,
-            description=submenu.description,
-            menu_id=menu_id,
-        )
+            raise FlushError('Подменю с такими параметрами уже есть')
+        custom_id = submenu.id
+        if custom_id:
+            new_submenu = Submenu(
+                id=custom_id,
+                title=submenu.title,
+                description=submenu.description,
+                menu_id=menu_id,
+            )
+        else:
+            new_submenu = Submenu(
+                title=submenu.title,
+                description=submenu.description,
+                menu_id=menu_id,
+            )
         self.db.add(new_submenu)
         await self.db.commit()
         await self.db.refresh(new_submenu)
@@ -47,7 +56,11 @@ class SubmenuRepository:
         if not current_submenu:
             raise NoResultFound('submenu not found')
         try:
-            await check_unique_submenu(db=self.db, submenu=updated_submenu)
+            await check_unique_submenu(
+                db=self.db,
+                submenu=updated_submenu,
+                submenu_id=submenu_id,
+            )
         except FlushError:
             raise FlushError('Подменю с таким названием уже есть')
         current_submenu.title = updated_submenu.title

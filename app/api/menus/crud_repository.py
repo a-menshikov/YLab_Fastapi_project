@@ -37,11 +37,19 @@ class MenuRepository:
         try:
             await check_unique_menu(db=self.db, menu=menu)
         except FlushError:
-            raise FlushError('Меню с таким названием уже есть')
-        db_menu = self.model(
-            title=menu.title,
-            description=menu.description,
-        )
+            raise FlushError('Меню с такими параметрами уже есть')
+        custom_id = menu.id
+        if custom_id:
+            db_menu = self.model(
+                id=custom_id,
+                title=menu.title,
+                description=menu.description,
+            )
+        else:
+            db_menu = self.model(
+                title=menu.title,
+                description=menu.description,
+            )
         self.db.add(db_menu)
         await self.db.commit()
         await self.db.refresh(db_menu)
@@ -53,7 +61,11 @@ class MenuRepository:
         if not current_menu:
             raise NoResultFound('menu not found')
         try:
-            await check_unique_menu(db=self.db, menu=updated_menu)
+            await check_unique_menu(
+                db=self.db,
+                menu=updated_menu,
+                menu_id=menu_id,
+            )
         except FlushError:
             raise FlushError('Меню с таким названием уже есть')
         current_menu.title = updated_menu.title

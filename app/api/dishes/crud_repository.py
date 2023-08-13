@@ -25,18 +25,28 @@ class DishRepository:
         try:
             await check_unique_dish(db=self.db, dish=dish)
         except FlushError:
-            raise FlushError('Блюдо с таким названием и описанием уже есть')
+            raise FlushError('Блюдо с такими параметрами уже есть')
         try:
             await check_objects(db=self.db, menu_id=menu_id,
                                 submenu_id=submenu_id)
         except NoResultFound as error:
             raise NoResultFound(error.args[0])
-        new_dish = Dish(
-            title=dish.title,
-            description=dish.description,
-            price=dish.price,
-            submenu_id=submenu_id,
-        )
+        custom_id = dish.id
+        if custom_id:
+            new_dish = Dish(
+                id=custom_id,
+                title=dish.title,
+                description=dish.description,
+                price=dish.price,
+                submenu_id=submenu_id,
+            )
+        else:
+            new_dish = Dish(
+                title=dish.title,
+                description=dish.description,
+                price=dish.price,
+                submenu_id=submenu_id,
+            )
         self.db.add(new_dish)
         await self.db.commit()
         await self.db.refresh(new_dish)
@@ -48,7 +58,11 @@ class DishRepository:
         if not current_dish:
             raise NoResultFound('dish not found')
         try:
-            await check_unique_dish(db=self.db, dish=updated_dish)
+            await check_unique_dish(
+                db=self.db,
+                dish=updated_dish,
+                dish_id=dish_id,
+            )
         except FlushError:
             raise FlushError('Блюдо с таким названием и описанием уже есть')
         current_dish.title = updated_dish.title
