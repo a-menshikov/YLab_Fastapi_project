@@ -80,6 +80,7 @@ class СacheRepository():
                                 submenu_id: str) -> None:
         """Работа с кэшем при изменении блюда."""
         await self.delete_all_dish_cache(submenu_id, menu_id)
+        await self.delete_full_base_cache()
         await self.set_dish_cache(item=item, submenu_id=submenu_id,
                                   menu_id=menu_id)
 
@@ -138,6 +139,7 @@ class СacheRepository():
     async def update_submenu_cache(self, item: Submenu) -> None:
         """Работа с кэшем при изменении подменю."""
         await self.delete_all_submenu_cache(str(item.menu_id))
+        await self.delete_full_base_cache()
         await self.set_submenu_cache(item)
 
     async def delete_submenu_cache(self, submenu_id: str,
@@ -199,6 +201,10 @@ class СacheRepository():
     async def delete_all_menu_cache(self) -> None:
         """Удаление всех меню из кеша."""
         await self.cacher.delete(MENUS_LINK)
+        await self.delete_full_base_cache()
+
+    async def delete_full_base_cache(self) -> None:
+        """Удаление древовидной структуры базы из кеша."""
         await self.cacher.delete('full_base_menu')
 
     async def delete_menu_cache(self, menu_id: str) -> None:
