@@ -13,6 +13,6 @@ def get_routes() -> dict[str, str]:
 
 def reverse(foo: Callable, routes: dict[str, str] = get_routes(),
             **kwargs) -> str:
-    """Получение url по маршруту."""
+    """Получение url адреса."""
     path = routes[foo.__name__]
     return path.format(**kwargs)

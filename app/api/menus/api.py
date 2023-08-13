@@ -25,7 +25,8 @@ async def get_menus(
 
 
 @menu_router.post(
-    MENUS_LINK, response_model=MenuRead,
+    MENUS_LINK,
+    response_model=MenuRead,
     status_code=201,
     tags=['Меню'],
     summary='Добавить меню',
@@ -102,7 +103,7 @@ async def patch_menu(
 
 
 @menu_router.delete(
-    '/menus/{menu_id}',
+    MENU_LINK,
     status_code=200,
     tags=['Меню'],
     summary='Удалить меню',
