@@ -106,14 +106,11 @@ class DishService:
         self,
         background_tasks: BackgroundTasks,
         dish_id: str,
-        submenu_id: str,
         menu_id: str,
     ) -> None:
         """Удаление блюда по id."""
         background_tasks.add_task(
             self.cache_repo.delete_dish_cache,
-            dish_id=dish_id,
-            submenu_id=submenu_id,
             menu_id=menu_id,
         )
         await self.crud_repo.delete_dish(dish_id=dish_id)

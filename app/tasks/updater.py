@@ -58,8 +58,11 @@ class BaseUpdaterRepo():
         }
         requests.post(url, json=data)
 
-    def post_submenu(self, submenu: dict[str, str | list],
-                     menu_id: str) -> None:
+    def post_submenu(
+        self,
+        submenu: dict[str, str | list],
+        menu_id: str,
+    ) -> None:
         """Запостить новое подменю в базу."""
         url = PREFIX_LINK + SUBMENUS_LINK.format(menu_id=menu_id)
         data = {
@@ -77,8 +80,12 @@ class BaseUpdaterRepo():
                 menu_id=menu_id,
             )
 
-    def post_dish(self, dish: dict[str, str], submenu_id: str,
-                  menu_id: str) -> None:
+    def post_dish(
+        self,
+        dish: dict[str, str],
+        submenu_id: str,
+        menu_id: str,
+    ) -> None:
         """Запостить новое блюдо в базу."""
         url = PREFIX_LINK + DISHES_LINK.format(
             menu_id=menu_id,
@@ -92,8 +99,12 @@ class BaseUpdaterRepo():
         }
         requests.post(url, json=data)
 
-    def post_dishes_batch(self, dishes: list, submenu_id: str,
-                          menu_id: str) -> None:
+    def post_dishes_batch(
+        self,
+        dishes: list,
+        submenu_id: str,
+        menu_id: str,
+    ) -> None:
         """Запостить новые блюда в базу списком."""
         for dish in dishes:
             self.post_dish(
@@ -119,8 +130,11 @@ class BaseUpdaterRepo():
                 current_menu['description'] != menu['description']:
             self.patch_menu(menu=menu)
 
-    def patch_submenu(self, submenu: dict[str, str | list],
-                      menu_id: str) -> None:
+    def patch_submenu(
+        self,
+        submenu: dict[str, str | list],
+        menu_id: str,
+    ) -> None:
         """Обновить данные о подменю в базе."""
         data = {
             'title': submenu['title'],
@@ -132,8 +146,11 @@ class BaseUpdaterRepo():
         )
         requests.patch(url, json=data)
 
-    def check_submenu(self, submenu: dict[str, str | list],
-                      menu_id: str) -> None:
+    def check_submenu(
+        self,
+        submenu: dict[str, str | list],
+        menu_id: str,
+    ) -> None:
         """Проверить состояние подменю в базе и по необходимости обновить."""
         url = PREFIX_LINK + SUBMENU_LINK.format(
             menu_id=menu_id,
@@ -144,8 +161,12 @@ class BaseUpdaterRepo():
                 current_submenu['description'] != submenu['description']:
             self.patch_submenu(submenu=submenu, menu_id=menu_id)
 
-    def patch_dish(self, dish: dict[str, str], submenu_id: str,
-                   menu_id: str) -> None:
+    def patch_dish(
+        self,
+        dish: dict[str, str],
+        submenu_id: str,
+        menu_id: str,
+    ) -> None:
         """Обновить данные о блюде в базе."""
         data = {
             'title': dish['title'],
@@ -159,8 +180,12 @@ class BaseUpdaterRepo():
         )
         requests.patch(url, json=data)
 
-    def check_dish(self, dish: dict[str, str], submenu_id: str,
-                   menu_id: str) -> None:
+    def check_dish(
+        self,
+        dish: dict[str, str],
+        submenu_id: str,
+        menu_id: str,
+    ) -> None:
         """Проверить состояние блюда в базе и по необходимости обновить."""
         url = PREFIX_LINK + DISH_LINK.format(
             menu_id=menu_id,
@@ -199,8 +224,12 @@ class BaseUpdaterRepo():
         )
         requests.delete(url)
 
-    def check_dishes(self, dishes: list[dict[str, str]], menu_id: str,
-                     submenu_id: str) -> None:
+    def check_dishes(
+        self,
+        dishes: list[dict[str, str]],
+        menu_id: str,
+        submenu_id: str,
+    ) -> None:
         """Проверить состояние блюд в базе и привести
         в соответствие с файлом."""
         dishes_id = self.get_dishes_from_db(
@@ -224,8 +253,11 @@ class BaseUpdaterRepo():
                 submenu_id=submenu_id,
             )
 
-    def check_submenus(self, submenus: list[dict],
-                       menu_id: str) -> None:
+    def check_submenus(
+        self,
+        submenus: list[dict],
+        menu_id: str,
+    ) -> None:
         """Проверить состояние подменю в базе и привести
         в соответствие с файлом."""
         submenus_id = self.get_submenus_from_db(menu_id)

@@ -146,7 +146,6 @@ async def destroy_dish(
     try:
         await repo.delete_dish(
             dish_id=dish_id,
-            submenu_id=submenu_id,
             menu_id=menu_id,
             background_tasks=background_tasks,
         )

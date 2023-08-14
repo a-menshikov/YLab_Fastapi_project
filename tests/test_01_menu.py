@@ -23,9 +23,11 @@ async def test_all_menu_empty(client: AsyncClient) -> None:
     assert response.json() == [], 'В ответе непустой список'
 
 
-async def test_post_menu(menu_post: dict[str, str],
-                         saved_data: dict[str, Any],
-                         client: AsyncClient) -> None:
+async def test_post_menu(
+    menu_post: dict[str, str],
+    saved_data: dict[str, Any],
+    client: AsyncClient,
+) -> None:
     """Добавление нового меню."""
     response = await client.post(
         reverse(post_new_menu),
@@ -47,8 +49,10 @@ async def test_post_menu(menu_post: dict[str, str],
     saved_data['menu'] = response.json()
 
 
-async def test_post_menu_double(menu_post: dict[str, str],
-                                client: AsyncClient) -> None:
+async def test_post_menu_double(
+    menu_post: dict[str, str],
+    client: AsyncClient,
+) -> None:
     """Добавление нового меню с одинаковым названием."""
     response = await client.post(
         reverse(post_new_menu),
@@ -68,8 +72,10 @@ async def test_all_menu_not_empty(client: AsyncClient) -> None:
     assert response.json() != [], 'В ответе пустой список'
 
 
-async def test_get_posted_menu(saved_data: dict[str, Any],
-                               client: AsyncClient) -> None:
+async def test_get_posted_menu(
+    saved_data: dict[str, Any],
+    client: AsyncClient,
+) -> None:
     """Получение созданного меню."""
     menu = saved_data['menu']
     response = await client.get(
@@ -88,9 +94,11 @@ async def test_get_posted_menu(saved_data: dict[str, Any],
         'Количество блюд не соответствует ожидаемому'
 
 
-async def test_patch_menu(menu_patch: dict[str, str],
-                          saved_data: dict[str, Any],
-                          client: AsyncClient) -> None:
+async def test_patch_menu(
+    menu_patch: dict[str, str],
+    saved_data: dict[str, Any],
+    client: AsyncClient,
+) -> None:
     """Изменение текущего меню."""
     menu = saved_data['menu']
     response = await client.patch(
@@ -113,8 +121,10 @@ async def test_patch_menu(menu_patch: dict[str, str],
     saved_data['menu'] = response.json()
 
 
-async def test_get_patched_menu(saved_data: dict[str, Any],
-                                client: AsyncClient) -> None:
+async def test_get_patched_menu(
+    saved_data: dict[str, Any],
+    client: AsyncClient,
+) -> None:
     """Получение обновленного меню."""
     menu = saved_data['menu']
     response = await client.get(
@@ -133,8 +143,10 @@ async def test_get_patched_menu(saved_data: dict[str, Any],
         'Количество блюд не соответствует ожидаемому'
 
 
-async def test_delete_menu(saved_data: dict[str, Any],
-                           client: AsyncClient) -> None:
+async def test_delete_menu(
+    saved_data: dict[str, Any],
+    client: AsyncClient,
+) -> None:
     """Удаление текущего меню."""
     menu = saved_data['menu']
     response = await client.delete(
@@ -146,8 +158,10 @@ async def test_delete_menu(saved_data: dict[str, Any],
         'Сообщение об удалении не соответствует ожидаемому'
 
 
-async def test_get_deleted_menu(saved_data: dict[str, Any],
-                                client: AsyncClient) -> None:
+async def test_get_deleted_menu(
+    saved_data: dict[str, Any],
+    client: AsyncClient,
+) -> None:
     """Получение удаленного меню."""
     menu = saved_data['menu']
     response = await client.get(

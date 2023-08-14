@@ -94,7 +94,6 @@ class SubmenuService:
         """Удаление подменю конкретного меню по id."""
         background_tasks.add_task(
             self.cache_repo.delete_submenu_cache,
-            submenu_id=submenu_id,
             menu_id=menu_id,
         )
         await self.crud_repo.delete_submenu(
