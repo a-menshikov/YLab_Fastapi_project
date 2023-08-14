@@ -22,8 +22,10 @@ async def get_submenus(
     repo: SubmenuService = Depends(),
 ) -> list[SubmenuRead]:
     """Получение всех подменю конкретного меню."""
-    return await repo.get_all_submenus(menu_id=menu_id,
-                                       background_tasks=background_tasks)
+    return await repo.get_all_submenus(
+        menu_id=menu_id,
+        background_tasks=background_tasks,
+    )
 
 
 @submenu_router.post(
@@ -41,8 +43,11 @@ async def post_new_submenu(
 ) -> SubmenuRead:
     """Добавление нового подменю к конкретному меню."""
     try:
-        return await repo.create_submenu(submenu=submenu, menu_id=menu_id,
-                                         background_tasks=background_tasks)
+        return await repo.create_submenu(
+            submenu=submenu,
+            menu_id=menu_id,
+            background_tasks=background_tasks,
+        )
     except FlushError as error:
         raise HTTPException(
             status_code=400,
@@ -70,8 +75,11 @@ async def get_submenu(
 ) -> SubmenuRead:
     """Получение подменю конкретного меню по id."""
     try:
-        return await repo.get_submenu_by_id(id=submenu_id, menu_id=menu_id,
-                                            background_tasks=background_tasks)
+        return await repo.get_submenu_by_id(
+            id=submenu_id,
+            menu_id=menu_id,
+            background_tasks=background_tasks,
+        )
     except NoResultFound as error:
         raise HTTPException(
             status_code=404,
@@ -126,8 +134,11 @@ async def destroy_submenu(
 ) -> JSONResponse:
     """Удаление подменю конкретного меню по id."""
     try:
-        await repo.delete_submenu(menu_id=menu_id, submenu_id=submenu_id,
-                                  background_tasks=background_tasks)
+        await repo.delete_submenu(
+            menu_id=menu_id,
+            submenu_id=submenu_id,
+            background_tasks=background_tasks,
+        )
         return JSONResponse(
             status_code=200,
             content='submenu deleted',

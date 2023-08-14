@@ -38,8 +38,10 @@ async def post_new_menu(
 ) -> MenuRead:
     """Добавление нового меню."""
     try:
-        return await repo.create_menu(menu=menu,
-                                      background_tasks=background_tasks)
+        return await repo.create_menu(
+            menu=menu,
+            background_tasks=background_tasks,
+        )
     except FlushError as error:
         raise HTTPException(
             status_code=400,
@@ -61,8 +63,10 @@ async def get_menu(
 ) -> MenuRead:
     """Получение меню по id."""
     try:
-        return await repo.get_menu_by_id(id=menu_id,
-                                         background_tasks=background_tasks)
+        return await repo.get_menu_by_id(
+            id=menu_id,
+            background_tasks=background_tasks,
+        )
     except NoResultFound as error:
         raise HTTPException(
             status_code=404,
@@ -108,13 +112,17 @@ async def patch_menu(
     tags=['Меню'],
     summary='Удалить меню',
 )
-async def destroy_menu(menu_id: str,
-                       background_tasks: BackgroundTasks,
-                       repo: MenuService = Depends(),) -> JSONResponse:
+async def destroy_menu(
+    menu_id: str,
+    background_tasks: BackgroundTasks,
+    repo: MenuService = Depends(),
+) -> JSONResponse:
     """Удаление меню по id."""
     try:
-        await repo.delete_menu(menu_id=menu_id,
-                               background_tasks=background_tasks)
+        await repo.delete_menu(
+            menu_id=menu_id,
+            background_tasks=background_tasks,
+        )
         return JSONResponse(
             status_code=200,
             content='menu deleted',

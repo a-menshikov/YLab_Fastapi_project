@@ -13,22 +13,32 @@ from app.database.services import check_objects, check_unique_dish
 class DishRepository:
     """Репозиторий CRUD операций модели блюда."""
 
-    def __init__(self, db: AsyncSession = Depends(get_db),
-                 submenu_repo: SubmenuRepository = Depends()) -> None:
+    def __init__(
+        self,
+        db: AsyncSession = Depends(get_db),
+        submenu_repo: SubmenuRepository = Depends()
+    ) -> None:
         self.db = db
         self.submenu_repo = submenu_repo
         self.model = Dish
 
-    async def create_dish(self, dish: DishPost, menu_id: str,
-                          submenu_id: str) -> Dish:
+    async def create_dish(
+        self,
+        dish: DishPost,
+        menu_id: str,
+        submenu_id: str,
+    ) -> Dish:
         """Добавление нового блюда."""
         try:
             await check_unique_dish(db=self.db, dish=dish)
         except FlushError:
             raise FlushError('Блюдо с такими параметрами уже есть')
         try:
-            await check_objects(db=self.db, menu_id=menu_id,
-                                submenu_id=submenu_id)
+            await check_objects(
+                db=self.db,
+                menu_id=menu_id,
+                submenu_id=submenu_id,
+            )
         except NoResultFound as error:
             raise NoResultFound(error.args[0])
         custom_id = dish.id
@@ -52,7 +62,11 @@ class DishRepository:
         await self.db.refresh(new_dish)
         return new_dish
 
-    async def update_dish(self, dish_id: str, updated_dish: DishPost) -> Dish:
+    async def update_dish(
+        self,
+        dish_id: str,
+        updated_dish: DishPost,
+    ) -> Dish:
         """Изменение блюда по id."""
         current_dish = await self.get_dish_by_id(id=dish_id)
         if not current_dish:
@@ -73,7 +87,10 @@ class DishRepository:
         await self.db.refresh(current_dish)
         return current_dish
 
-    async def get_dish_by_id(self, id: str) -> Dish:
+    async def get_dish_by_id(
+        self,
+        id: str,
+    ) -> Dish:
         """Получение блюда по id."""
         dish = (await self.db.execute(
             select(self.model).where(self.model.id == id)
@@ -82,7 +99,10 @@ class DishRepository:
             raise NoResultFound('dish not found')
         return dish
 
-    async def get_all_dishes(self, submenu_id: str) -> list[Dish]:
+    async def get_all_dishes(
+        self,
+        submenu_id: str,
+    ) -> list[Dish]:
         """Получение всех блюд."""
         try:
             await check_objects(db=self.db, submenu_id=submenu_id)
@@ -92,7 +112,10 @@ class DishRepository:
             select(self.model).where(self.model.submenu_id == submenu_id)
         )).scalars().all())
 
-    async def delete_dish(self, dish_id: str) -> None:
+    async def delete_dish(
+        self,
+        dish_id: str,
+    ) -> None:
         """Удаление блюда по id."""
         current_dish = await self.get_dish_by_id(id=dish_id)
         if not current_dish:

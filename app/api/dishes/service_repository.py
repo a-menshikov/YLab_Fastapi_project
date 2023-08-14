@@ -9,13 +9,20 @@ from app.database.schemas import DishPost
 class DishService:
     """Сервисный репозиторий для блюд."""
 
-    def __init__(self, crud_repo: DishRepository = Depends(),
-                 cache_repo: СacheRepository = Depends()) -> None:
+    def __init__(
+        self,
+        crud_repo: DishRepository = Depends(),
+        cache_repo: СacheRepository = Depends(),
+    ) -> None:
         self.crud_repo = crud_repo
         self.cache_repo = cache_repo
 
-    async def get_all_dishes(self, background_tasks: BackgroundTasks,
-                             submenu_id: str, menu_id: str) -> list[Dish]:
+    async def get_all_dishes(
+        self,
+        background_tasks: BackgroundTasks,
+        submenu_id: str,
+        menu_id: str,
+    ) -> list[Dish]:
         """Получение всех блюд."""
         cache = await self.cache_repo.get_all_dishes_cache(menu_id, submenu_id)
         if cache:
@@ -29,10 +36,19 @@ class DishService:
         )
         return items
 
-    async def get_dish_by_id(self, background_tasks: BackgroundTasks,
-                             id: str, menu_id: str, submenu_id: str) -> Dish:
+    async def get_dish_by_id(
+        self,
+        background_tasks: BackgroundTasks,
+        id: str,
+        menu_id: str,
+        submenu_id: str,
+    ) -> Dish:
         """Получение блюда по id."""
-        cache = await self.cache_repo.get_dish_cache(id, menu_id, submenu_id)
+        cache = await self.cache_repo.get_dish_cache(
+            id,
+            menu_id,
+            submenu_id,
+        )
         if cache:
             return cache
         item = await self.crud_repo.get_dish_by_id(id=id)
@@ -44,12 +60,19 @@ class DishService:
         )
         return item
 
-    async def create_dish(self, background_tasks: BackgroundTasks,
-                          dish: DishPost, menu_id: str,
-                          submenu_id: str) -> Dish:
+    async def create_dish(
+        self,
+        background_tasks: BackgroundTasks,
+        dish: DishPost,
+        menu_id: str,
+        submenu_id: str,
+    ) -> Dish:
         """Добавление нового блюда."""
-        item = await self.crud_repo.create_dish(dish=dish, menu_id=menu_id,
-                                                submenu_id=submenu_id)
+        item = await self.crud_repo.create_dish(
+            dish=dish,
+            menu_id=menu_id,
+            submenu_id=submenu_id,
+        )
         background_tasks.add_task(
             self.cache_repo.create_dish_cache,
             item=item,
@@ -58,12 +81,19 @@ class DishService:
         )
         return item
 
-    async def update_dish(self, background_tasks: BackgroundTasks,
-                          dish_id: str, submenu_id: str, menu_id: str,
-                          updated_dish: DishPost) -> Dish:
+    async def update_dish(
+        self,
+        background_tasks: BackgroundTasks,
+        dish_id: str,
+        submenu_id: str,
+        menu_id: str,
+        updated_dish: DishPost,
+    ) -> Dish:
         """Изменение блюда по id."""
-        item = await self.crud_repo.update_dish(dish_id=dish_id,
-                                                updated_dish=updated_dish)
+        item = await self.crud_repo.update_dish(
+            dish_id=dish_id,
+            updated_dish=updated_dish,
+        )
         background_tasks.add_task(
             self.cache_repo.update_dish_cache,
             item=item,
@@ -72,9 +102,13 @@ class DishService:
         )
         return item
 
-    async def delete_dish(self, background_tasks: BackgroundTasks,
-                          dish_id: str, submenu_id: str,
-                          menu_id: str) -> None:
+    async def delete_dish(
+        self,
+        background_tasks: BackgroundTasks,
+        dish_id: str,
+        submenu_id: str,
+        menu_id: str,
+    ) -> None:
         """Удаление блюда по id."""
         background_tasks.add_task(
             self.cache_repo.delete_dish_cache,

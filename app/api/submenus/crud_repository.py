@@ -13,21 +13,33 @@ from app.database.services import check_objects, check_unique_submenu
 class SubmenuRepository:
     """Репозиторий CRUD операций модели подменю."""
 
-    def __init__(self, db: AsyncSession = Depends(get_db),
-                 menu_repo: MenuRepository = Depends()) -> None:
+    def __init__(
+        self,
+        db: AsyncSession = Depends(get_db),
+        menu_repo: MenuRepository = Depends(),
+    ) -> None:
         self.db = db
         self.menu_repo = menu_repo
         self.model = Submenu
 
-    async def create_submenu(self, submenu: SubmenuPost,
-                             menu_id: str) -> Submenu:
+    async def create_submenu(
+        self,
+        submenu: SubmenuPost,
+        menu_id: str,
+    ) -> Submenu:
         """Добавление нового подменю."""
         try:
-            await check_objects(db=self.db, menu_id=menu_id)
+            await check_objects(
+                db=self.db,
+                menu_id=menu_id,
+            )
         except NoResultFound as error:
             raise NoResultFound(error.args[0])
         try:
-            await check_unique_submenu(db=self.db, submenu=submenu)
+            await check_unique_submenu(
+                db=self.db,
+                submenu=submenu,
+            )
         except FlushError:
             raise FlushError('Подменю с такими параметрами уже есть')
         custom_id = submenu.id
@@ -49,8 +61,11 @@ class SubmenuRepository:
         await self.db.refresh(new_submenu)
         return new_submenu
 
-    async def update_submenu(self, submenu_id: str,
-                             updated_submenu: SubmenuPost) -> Submenu:
+    async def update_submenu(
+        self,
+        submenu_id: str,
+        updated_submenu: SubmenuPost,
+    ) -> Submenu:
         """Изменение подменю по id."""
         current_submenu = await self.get_submenu_by_id(id=submenu_id)
         if not current_submenu:
