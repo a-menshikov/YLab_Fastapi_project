@@ -50,8 +50,6 @@ services:
     restart: always
     networks:
       - ylab_network
-    volumes:
-      - /mnt/e/DEV/admin:/code/app/admin
     depends_on:
       database:
         condition: service_healthy
