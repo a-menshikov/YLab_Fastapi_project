@@ -41,22 +41,16 @@ class DishRepository:
             )
         except NoResultFound as error:
             raise NoResultFound(error.args[0])
-        custom_id = dish.id
-        if custom_id:
-            new_dish = Dish(
-                id=custom_id,
-                title=dish.title,
-                description=dish.description,
-                price=dish.price,
-                submenu_id=submenu_id,
-            )
-        else:
-            new_dish = Dish(
-                title=dish.title,
-                description=dish.description,
-                price=dish.price,
-                submenu_id=submenu_id,
-            )
+        new_dish = Dish(
+            title=dish.title,
+            description=dish.description,
+            price=dish.price,
+            submenu_id=submenu_id,
+        )
+        if dish.id:
+            new_dish.id = dish.id
+        if dish.discount is not None:
+            new_dish.discount = dish.discount
         self.db.add(new_dish)
         await self.db.commit()
         await self.db.refresh(new_dish)
@@ -82,6 +76,8 @@ class DishRepository:
         current_dish.title = updated_dish.title
         current_dish.description = updated_dish.description
         current_dish.price = updated_dish.price
+        if updated_dish.discount is not None:
+            current_dish.discount = updated_dish.discount
         await self.db.merge(current_dish)
         await self.db.commit()
         await self.db.refresh(current_dish)
