@@ -109,5 +109,5 @@
 
 ## Контакты
 
-**telegram** @Menshikov_AS  
+**telegram** [@Menshikov_AS](https://t.me/Menshikov_AS)  
 **e-mail** <a.menshikov1989@gmail.com>
