@@ -106,3 +106,8 @@
     ```bash
     docker compose -f docker-compose-pytest.yml up -d && docker logs --follow backend && docker compose -f docker-compose-pytest.yml down -v
     ```
+
+## Контакты
+
+telegram - @Menshikov_AS
+email - <a.menshikov1989@gmail.com>
