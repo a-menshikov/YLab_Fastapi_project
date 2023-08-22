@@ -99,6 +99,7 @@ class DishPost(DishBase):
     """Схема для создания нового блюда."""
 
     id: str | None
+    discount: int | None
     price: str
 
     @validator('price')
@@ -106,19 +107,33 @@ class DishPost(DishBase):
         """Округление входящей цены до 2 знаков."""
         return Decimal(value).quantize(Decimal('0.00'))
 
+    @validator('discount')
+    def validate_discount(cls, value: int) -> int:
+        """Валидация скидки."""
+        if value > 100 or value < 0:
+            raise ValueError(
+                'Скидка должна находиться в диапазоне от 0 до 100'
+            )
+        return value
+
 
 class DishRead(DishWithID):
     """Схема для чтения блюда."""
 
     submenu_id: UUID
+    discount: int
     price: Decimal
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
     @validator('price')
-    def validate_price(cls, value: Decimal) -> str:
-        """Перевод цены в строку для вывода"""
+    def validate_price(cls, value: Decimal, values: dict) -> str:
+        """Расчёт цены со скидкой и перевод в строку для вывода."""
+        discount = values.get('discount')
+        if discount:
+            value = round(float(value) * (1 - discount / 100), 2)
         return str(value)
 
     @validator('submenu_id')
@@ -130,6 +145,7 @@ class DishRead(DishWithID):
 class DishReadFullGet(DishWithID):
     """Схема для чтения блюда при полной выдаче базы."""
 
+    discount: int
     price: Decimal
 
     class Config:
@@ -137,8 +153,11 @@ class DishReadFullGet(DishWithID):
         orm_mode = True
 
     @validator('price')
-    def validate_price(cls, value: Decimal) -> str:
-        """Перевод цены в строку для вывода"""
+    def validate_price(cls, value: Decimal, values: dict) -> str:
+        """Расчёт цены со скидкой и перевод в строку для вывода."""
+        discount = values.get('discount')
+        if discount:
+            value = round(float(value) * (1 - discount / 100), 2)
         return str(value)
 
 

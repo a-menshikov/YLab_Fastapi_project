@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import DECIMAL, Column, ForeignKey, String, Text
+from sqlalchemy import DECIMAL, Column, ForeignKey, Integer, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import column_property, relationship
 from sqlalchemy.schema import UniqueConstraint
@@ -29,6 +29,10 @@ class Dish(Base):
     price = Column(
         DECIMAL(scale=2),
         nullable=False,
+    )
+    discount = Column(
+        Integer(),
+        default=0,
     )
     submenu_id = Column(
         UUID(as_uuid=True),

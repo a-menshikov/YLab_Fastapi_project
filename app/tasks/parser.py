@@ -7,18 +7,22 @@ from app.config import MENU_FILE_PATH
 class ParserRepo:
     """Сервисный репозиторий для парсинга объектов из файла."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.sheet: Worksheet = load_workbook(filename=MENU_FILE_PATH).active
         self.parse_result: list = []
 
     def make_dish(self, row: int) -> dict:
         """Собрать словарь с данными о блюде из файла."""
-        dish: dict[str, str] = {}
-        cells = self.sheet[f'C{row}':f'F{row}'][0]  # type: ignore
+        dish: dict[str, str | int] = {}
+        cells = self.sheet[f'C{row}':f'G{row}'][0]  # type: ignore
         dish['id'] = cells[0].value
         dish['title'] = cells[1].value
         dish['description'] = cells[2].value
         dish['price'] = str(cells[3].value).replace(',', '.')
+        if cells[4].value:
+            dish['discount'] = cells[4].value
+        else:
+            dish['discount'] = 0
         return dish
 
     def make_submenu(self, row: int, max_row: int) -> dict:

@@ -96,6 +96,7 @@ class BaseUpdaterRepo():
             'title': dish['title'],
             'description': dish['description'],
             'price': dish['price'],
+            'discount': dish['discount'],
         }
         requests.post(url, json=data)
 
@@ -172,6 +173,7 @@ class BaseUpdaterRepo():
             'title': dish['title'],
             'description': dish['description'],
             'price': dish['price'],
+            'discount': dish['discount'],
         }
         url = PREFIX_LINK + DISH_LINK.format(
             menu_id=menu_id,
@@ -193,9 +195,13 @@ class BaseUpdaterRepo():
             dish_id=dish['id'],
         )
         current_dish = requests.get(url).json()
+        price = str(round(
+            float(dish['price']) * (1 - current_dish['discount'] / 100), 2
+        ))
         if current_dish['title'] != dish['title'] or \
                 current_dish['description'] != dish['description'] or \
-                current_dish['price'] != dish['price']:
+                current_dish['price'] != price or \
+                current_dish['discount'] != dish['discount']:
             self.patch_dish(
                 dish=dish,
                 submenu_id=submenu_id,
